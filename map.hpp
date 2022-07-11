@@ -6,17 +6,16 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/06/28 21:24:23 by aliens           ###   ########.fr       */
+/*   Updated: 2022/07/11 16:00:00 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 # define MAP_HPP
 
-#include "pair.hpp"
 #include "iterator.hpp"
-#include <functional>
-#include <memory>
+#include "pair.hpp"
+#include "RBTree.hpp"
 
 namespace ft {
 
@@ -24,7 +23,7 @@ namespace ft {
 													VECTOR
 	**************************************************************************************************/
 	
-	template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T> > >
+	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T>>>
 	class map {
 	public:
 		typedef Key												key_type;
