@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/26 18:22:43 by aliens            #+#    #+#             */
-/*   Updated: 2022/06/28 15:39:09 by aliens           ###   ########.fr       */
+/*   Updated: 2022/07/26 13:38:52 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,16 @@ namespace ft {
 
 	template <class T1, class T2>
 	class pair {
+	public:
 		typedef T1	first_type;
 		typedef T2	second_type;
 
-		first	first_type;
-		second	second_type;
+		first_type	first;
+		second_type	second;
 
 	/******************************************_CONSTRUCTORS_******************************************/
 
-	pair(void) : first(first_type), second(second_type) {}
+	pair(void) : first(first_type()), second(second_type()) {}
 	
 	template<class U, class V> 
 	pair (const pair<U,V>& pair) : first(pair.first), second(pair.second) {}

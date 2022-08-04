@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/07/11 16:00:00 by aliens           ###   ########.fr       */
+/*   Updated: 2022/07/12 11:10:13 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ namespace ft {
 		typedef	ft::reverse_iterator<iterator>					reverse_iterator;
 		typedef	ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 		typedef ft::iterator_traits::difference_type			difference_type;
-		typedef ft::iterator_traits::size_type					size_type;
+		typedef std::size_t										size_type;
 
 	/******************************************_CONSTRUCTORS_******************************************/
 

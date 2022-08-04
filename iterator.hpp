@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/06/26 13:56:53 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/04 16:40:51 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,7 +241,7 @@ namespace ft {
 
 		reverse_iterator(void) : _it() {}
 
-		explicit reverse_iterator(iterator_type it) : _it(it) {}
+		reverse_iterator(iterator_type it) : _it(it) {}
 
 		reverse_iterator(pointer ptr) : _it(iterator_type(ptr)) {}
 

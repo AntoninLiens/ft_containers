@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:51:46 by aliens            #+#    #+#             */
-/*   Updated: 2022/06/28 20:42:16 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/04 19:30:08 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -333,15 +333,14 @@ namespace ft {
 				if (position.base() == this->_start + pos)
 					break ;
 			}
-			this->_alloc.destroy(this->_start + pos);
 			if (pos == this->size())
 				this->_alloc.destroy(this->_end);
 			else {
-				size_type i = pos;
-				for (; i < this->size() - pos; i++)
-					*(this->_start + i) = *(this->_start + i + 1);
-				if (position.base() != this->_start)
-					*(this->_start + i) = *(this->_start + i + 1);
+				this->_alloc.destroy(this->_start + pos);
+				for (size_type i = pos; i < this->size(); i++) {
+					if (i < this->size() - 1)
+						*(this->_start + i) = *(this->_start + i + 1);
+				}
 			}
 			this->_end--;
 			return (iterator(this->_start + pos));
