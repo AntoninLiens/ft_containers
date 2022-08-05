@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/26 13:55:18 by aliens            #+#    #+#             */
-/*   Updated: 2022/06/26 18:15:55 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/04 20:23:39 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,7 @@ namespace ft {
 
 	/******************************************_CONSTRUCTOR_******************************************/
 
-	explicit stack(const container_type& container = container_type()) {
-		this->_container = container;
-	}
+	explicit stack(const container_type& container = container_type()) : _container(container) {}
 
 	/******************************************_GET_CONTAINER_******************************************/
 
