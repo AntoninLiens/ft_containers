@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/07/29 16:00:45 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/06 01:30:34 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,7 @@ namespace ft {
 	**************************************************************************************************/
 
 	template <class Key, class T>
-	class Node {
-	public:
+	struct Node {
 		ft::pair<const Key, T>	data_;
 		Node					*left_;
 		Node					*right_;
@@ -38,7 +37,7 @@ namespace ft {
 												RED_BLACK_TREE
 	**************************************************************************************************/
 
-	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T>>, class Node = ft::Node<const Key, T>>
+	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> >, class Node = ft::Node<const Key, T> >
 	class RBTree {
 	public:
 		typedef Key													key_type;
@@ -53,7 +52,7 @@ namespace ft {
 	/******************************************_CONSTRUCTORS_******************************************/
 
 		RBTree(const key_compare& cmp = key_compare(), const allocator_type& alloc = allocator_type(), const node_allocator_type& node_alloc = node_allocator_type())
-		: _cmp(cmp), _alloc(alloc), _node_alloc(node_allocator_type()) {
+		: _cmp(cmp), _alloc(alloc), _node_alloc(node_allocator_type()), _ll(false), _rl(false), _rr(false), _lr(false), _f(false) {
 			this->_leaf = this->_node_alloc.allocate(1);
 			this->_alloc.construct(&this->_leaf->data_, value_type());
 			this->_leaf->left_ = NULL;
@@ -72,6 +71,87 @@ namespace ft {
 
 
 	/******************************************_UTILS_******************************************/
+
+		Node	*next(Node *node) const {
+			if (node->right_ == this->_leaf) {
+				while (node && node == node->parent_->right_)
+					node = node->parent_;
+				node = node->parent_;
+			}
+			else {
+				node = node->right_;
+				while (node->left_ != this->_leaf)
+					node = node->left_;
+			}
+			return (node);
+		}
+
+		Node	*prev(Node *node) const {
+			if (node->left_ == this->_leaf) {
+				while (node && node == node->parent_->right_)
+					node = node->parent_;
+				node = node->parent_;
+			}
+			else {
+				node = node->left_;
+				while (node->right_ != this->_leaf)
+					node = node->right_;
+			}
+			return (node);
+		}
+
+		Node	*get_root(void) const {
+			return (this->_root);
+		}
+
+		void	aff_node(Node *node) const {
+			std::cout << node->data_.first << " | " << node->data_.second << std::endl;
+		}
+
+		void	aff_tree(Node *node) const {
+			int b2o;
+			if (node == this->_leaf)
+				return ;
+			this->aff_tree(node->left_);
+			!node->color_ ? b2o = 0 : b2o = 1; 
+			std::cout << node->data_.first << " | " << node->data_.second << " " << b2o << std::endl;
+			this->aff_tree(node->right_);
+		}
+
+		void	pre_order(Node *node) const {
+			if(this->_root != this->_leaf)
+			{
+				std::cout << "----------------------------------------" << std::endl;
+				std::cout << "| Node            | " << this->_root->data_.first << "                   |" << std::endl;
+				std::cout << "| Adresse node    | " << &this->_root << "      |" << std::endl;
+				if(this->_root->parent_ && this->_root->parent_ != this->_leaf)
+				{
+					std::cout << "| Parent          | " << this->_root->parent_->data_.first << "                   |" << std::endl;
+					Node * next = this->next(this->_root);
+					Node * prev = this->prev(this->_root);
+					if (next)
+						std::cout << "| Next            | " << next->data_.first << "                   |" << std::endl;
+					else
+						std::cout << "| Next            | None                |" << std::endl;
+					if(prev)
+						std::cout << "| Prev            | " << prev->data_.first << "                   |" << std::endl;
+					else
+						std::cout << "| Prev            | None                |" << std::endl;
+				}
+				if(this->_root->left_ != this->_leaf)
+					std::cout << "| Left child      | " << this->_root->left_->data_.first << "                   |" << std::endl;
+				else
+					std::cout << "| Left child      | None                |" << std::endl;
+				if(this->_root->right_ != this->_leaf)
+					std::cout << "| Right child     | " << this->_root->right_->data_.first << "                   |" << std::endl;
+				else
+					std::cout << "| Right child     | None                |" << std::endl;
+				std::cout << "----------------------------------------" << std::endl;
+				std::cout << std::endl;
+				this->aff_tree(this->_root->left_);
+				this->aff_tree(this->_root->right_);
+			}
+		}
 
 		Node	*balanceRB(Node *node) {
 			if (this->_ll) {
@@ -167,14 +247,10 @@ namespace ft {
 		}
 
 		Node	*insertNode(Node *node, value_type data) {
-			if (this->_root == this->_leaf) {
-				std::cout << "root" << std::endl;
+			if (this->_root == this->_leaf)
 				return (this->_root = newNode(data, false));
-			}
-			else if (node == this->_leaf) {
-				std::cout << "node" << std::endl;
-				return(node = newNode(data, true));
-			}
+			else if (node == this->_leaf)
+				return (node = newNode(data, true));
 			else if (this->_cmp(data.first, node->data_.first)) {
 				std::cout << "yo" << std::endl;
 				node->left_ = this->insertNode(node->left_, data);
@@ -192,7 +268,7 @@ namespace ft {
 						this->_f = true;
 				}
 			}
-			return (node = this->balanceRB(node));
+			return (node/* = this->balanceRB(node)*/);
 		}
 
 		Node	*deleteNode(Node *node, key_type key) {
@@ -290,11 +366,11 @@ namespace ft {
 		Node				*_root;
 		Node				*_leaf;
 		key_compare			_cmp;
-		bool				_ll = false;
-		bool				_rl = false;
-		bool				_rr = false;
-		bool				_lr = false;
-		bool				_f = false;
+		bool				_ll;
+		bool				_rl;
+		bool				_rr;
+		bool				_lr;
+		bool				_f;
 		allocator_type		_alloc;
 		node_allocator_type	_node_alloc;
 
