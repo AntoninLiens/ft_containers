@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/06 01:21:48 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/06 19:02:24 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,14 @@ int main(void) {
 		binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(i, j));
 	}
 
-	binaryTree.aff_node(binaryTree.get_root());
-	binaryTree.aff_tree(binaryTree.get_root());
+	binaryTree.aff_tree(binaryTree.get_root(), 0);
+
+	binaryTree.deleteNode(binaryTree.get_root(), 5);
+
+	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+
+	binaryTree.aff_tree(binaryTree.get_root(), 0);
+
 
 	return (0);
 }
