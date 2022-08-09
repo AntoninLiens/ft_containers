@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/06 19:21:36 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/09 12:40:00 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,97 +67,102 @@ namespace ft {
 
 		~RBTree(void) {}
 
-	/******************************************_MODIFIERS_******************************************/
-
-
-	/******************************************_UTILS_******************************************/
-
-		Node	*next(Node *node) const {
-			if (node->right_ == this->_leaf) {
-				while (node && node == node->parent_->right_)
-					node = node->parent_;
-				node = node->parent_;
-			}
-			else {
-				node = node->right_;
-				while (node->left_ != this->_leaf)
-					node = node->left_;
-			}
-			return (node);
-		}
-
-		Node	*prev(Node *node) const {
-			if (node->left_ == this->_leaf) {
-				while (node && node == node->parent_->right_)
-					node = node->parent_;
-				node = node->parent_;
-			}
-			else {
-				node = node->left_;
-				while (node->right_ != this->_leaf)
-					node = node->right_;
-			}
-			return (node);
-		}
+	/******************************************_GETTERS_******************************************/
 
 		Node	*get_root(void) const {
 			return (this->_root);
 		}
 
-		void	aff_node(Node *node) const {
-			std::string	color;
-			node->color_ ? color = "red" : color = "black";			
-			std::cout << node->data_.first << " | " << node->data_.second << " | " << color << std::endl;
+		Node	*get_leaf(void) const {
+			return (this->_leaf);
 		}
 
-		void	aff_tree(Node *node, int space) const {
-			int i;
-        	if(node != this->_leaf) {
-        	    space = space + 10;
-        	    this->aff_tree(node->right_, space);
-        	    std::cout << std::endl;
-        	    for (i = 10; i < space; i++)
-        	        std::cout << " ";
-        	    this->aff_node(node);
-        	    std::cout << std::endl;
-        	    this->aff_tree(node->left_, space);
-        	}
+		node_allocator_type	get_node_alloc(void) const {
+			return (this->_node_alloc);
 		}
 
-		// void	pre_order(Node *node) const {
-		// 	if(this->_root != this->_leaf) {
-		// 		std::cout << "----------------------------------------" << std::endl;
-		// 		std::cout << "| Node            | " << this->_root->data_.first << "                   |" << std::endl;
-		// 		std::cout << "| Adresse node    | " << &this->_root << "      |" << std::endl;
-		// 		if(this->_root->parent_ && this->_root->parent_ != this->_leaf) {
-		// 			std::cout << "| Parent          | " << this->_root->parent_->data_.first << "                   |" << std::endl;
-		// 			Node * next = this->next(this->_root);
-		// 			Node * prev = this->prev(this->_root);
-		// 			if (next)
-		// 				std::cout << "| Next            | " << next->data_.first << "                   |" << std::endl;
-		// 			else
-		// 				std::cout << "| Next            | None                |" << std::endl;
-		// 			if(prev)
-		// 				std::cout << "| Prev            | " << prev->data_.first << "                   |" << std::endl;
-		// 			else
-		// 				std::cout << "| Prev            | None                |" << std::endl;
-		// 		}
-		// 		if(this->_root->left_ != this->_leaf)
-		// 			std::cout << "| Left child      | " << this->_root->left_->data_.first << "                   |" << std::endl;
-		// 		else
-		// 			std::cout << "| Left child      | None                |" << std::endl;
-		// 		if(this->_root->right_ != this->_leaf)
-		// 			std::cout << "| Right child     | " << this->_root->right_->data_.first << "                   |" << std::endl;
-		// 		else
-		// 			std::cout << "| Right child     | None                |" << std::endl;
-		// 		std::cout << "----------------------------------------" << std::endl;
-		// 		std::cout << std::endl;
-		// 		this->pre_order(this->_root->left_);
-		// 		this->pre_order(this->_root->right_);
-		// 	}
-		// }
+	/******************************************_MODIFIERS_******************************************/
 
-		Node	*balanceRB(Node *node) {
+		Node	*insertNode(Node *node, value_type data) {
+			if (this->_root == this->_leaf)
+				return (this->_root = newNode(data, false));
+			else if (node == this->_leaf)
+				return (node = newNode(data, true));
+			else if (this->_cmp(data.first, node->data_.first)) {
+				node->left_ = this->insertNode(node->left_, data);
+				node->left_->parent_ = node;
+				if (node != this->_root)
+					if (node->color_ && node->left_->color_)
+						this->_f = true;
+			}
+			else if (this->_cmp(node->data_.first, data.first)) {
+				node->right_ = this->insertNode(node->right_, data);
+				node->right_->parent_ = node;
+				if (node != this->_root) {
+					if (node->color_ && node->right_->color_)
+						this->_f = true;
+				}
+			}
+			return (node = this->balanceInsertRB(node));
+		}
+
+		Node	*deleteNode(Node *node, key_type key) {
+			if (node == this->_leaf)
+				return (node);
+			else if (this->_cmp(key, node->data_.first))
+				node->left_ = this->deleteNode(node->left_, key);
+			else if (this->_cmp(node->data_.first, key))
+				node->right_ = this->deleteNode(node->right_, key);
+			else {
+				Node	*tmp = this->_leaf;
+				if (node->left_ == this->_leaf || node->right_ == this->_leaf) {
+					tmp = node->left_ != this->_leaf ? node->left_ : node->right_;
+					if (tmp == this->_leaf) {
+						tmp = node;
+						node = this->_leaf;
+					}
+					else {
+						if (node->left_ == this->_leaf) {
+							Node	*tmparent = node->parent_;
+							tmp = node;
+							node = node->right_;
+							node->parent_ = tmparent;
+						}
+						else if (node->right_ == this->_leaf) {
+							Node	*tmparent = node->parent_;
+							tmp = node;
+							node = node->right_;
+							node->parent_ = tmparent;
+						}
+					}
+					if (tmp->parent_ == NULL && tmp->left_ == this->_leaf && tmp->right_ == this->_leaf) {
+						this->_alloc.destroy(&tmp->data_);
+						this->_node_alloc.deallocate(tmp, 1);
+						this->_root = this->_leaf;
+					}
+					else {
+						if (this->_root == tmp)
+							this->_root = node;
+						this->_alloc.destroy(&tmp->data_);
+						this->_node_alloc.deallocate(tmp, 1);
+					}
+				}
+				else if (node->left_ != this->_leaf && node->right_ != this->_leaf) {
+					tmp = minValNode(node->right_); 
+					this->_alloc.destroy(&node->data_); 
+					this->_alloc.construct(&node->data_, tmp->data_);
+					node->color_ = tmp->color_;
+					node->right_ = deleteNode(node->right_, node->data_.first);
+				}
+			}
+			if (node == this->_leaf)
+				return (node);
+			return (node);
+		}
+
+	/******************************************_BALANCE_******************************************/
+
+		Node	*balanceInsertRB(Node *node) {
 			if (this->_ll) {
 				node = this->rotateLeft(node);
 				node->color_ = false;
@@ -250,81 +255,90 @@ namespace ft {
 			return (tmpA);
 		}
 
-		Node	*insertNode(Node *node, value_type data) {
-			if (this->_root == this->_leaf)
-				return (this->_root = newNode(data, false));
-			else if (node == this->_leaf)
-				return (node = newNode(data, true));
-			else if (this->_cmp(data.first, node->data_.first)) {
-				node->left_ = this->insertNode(node->left_, data);
-				node->left_->parent_ = node;
-				if (node != this->_root)
-					if (node->color_ && node->left_->color_)
-						this->_f = true;
-			}
-			else if (this->_cmp(node->data_.first, data.first)) {
-				node->right_ = this->insertNode(node->right_, data);
-				node->right_->parent_ = node;
-				if (node != this->_root) {
-					if (node->color_ && node->right_->color_)
-						this->_f = true;
-				}
-			}
-			return (node = this->balanceRB(node));
+	/******************************************_PRINT_TREE_******************************************/
+
+		void	aff_node(Node *node) const {
+			std::string	color;
+			node->color_ ? color = "red" : color = "black";			
+			std::cout << node->data_.first << " | " << node->data_.second << " | " << color << std::endl;
 		}
 
-		Node	*deleteNode(Node *node, key_type key) {
-			if (node == this->_leaf)
-				return (node);
-			else if (this->_cmp(key, node->data_.first))
-				node->left_ = this->deleteNode(node->left_, key);
-			else if (this->_cmp(node->data_.first, key))
-				node->right_ = this->deleteNode(node->right_, key);
-			else {
-				Node	*tmp = this->_leaf;
-				if (node->left_ == this->_leaf || node->right_ == this->_leaf) {
-					tmp = node->left_ != this->_leaf ? node->left_ : node->right_;
-					if (tmp == this->_leaf) {
-						tmp = node;
-						node = this->_leaf;
-					}
-					else {
-						if (node->left_ == this->_leaf) {
-							Node	*tmparent = node->parent_;
-							tmp = node;
-							node = node->right_;
-							node->parent_ = tmparent;
-						}
-						else if (node->right_ == this->_leaf) {
-							Node	*tmparent = node->parent_;
-							tmp = node;
-							node = node->right_;
-							node->parent_ = tmparent;
-						}
-					}
-					if (tmp->parent_ == NULL && tmp->left_ == this->_leaf && tmp->right_ == this->_leaf) {
-						this->_alloc.destroy(&tmp->data_);
-						this->_node_alloc.deallocate(tmp, 1);
-						this->_root = this->_leaf;
-					}
-					else {
-						if (this->_root == tmp)
-							this->_root = node;
-						this->_alloc.destroy(&tmp->data_);
-						this->_node_alloc.deallocate(tmp, 1);
-					}
-				}
-				else if (node->left_ != this->_leaf && node->right_ != this->_leaf) {
-					tmp = minValNode(node->right_); 
-					this->_alloc.destroy(&node->data_); 
-					this->_alloc.construct(&node->data_, tmp->data_);
-					node->right_ = deleteNode(node->right_, node->data_.first);
-				}
-			}
-			if (node == this->_leaf)
-				return (node);
-			return (node = this->balanceRB(node));
+		void	aff_tree(Node *node, int space) const {
+			int i;
+        	if(node != this->_leaf) {
+        	    space = space + 10;
+        	    this->aff_tree(node->right_, space);
+        	    std::cout << std::endl;
+        	    for (i = 10; i < space; i++)
+        	        std::cout << " ";
+        	    this->aff_node(node);
+        	    std::cout << std::endl;
+        	    this->aff_tree(node->left_, space);
+        	}
 		}
+
+	/******************************************_UTILS_******************************************/
+
+		Node	*next(Node *node) const {
+			if (node->right_ == this->_leaf) {
+				while (node && node == node->parent_->right_)
+					node = node->parent_;
+				node = node->parent_;
+			}
+			else {
+				node = node->right_;
+				while (node->left_ != this->_leaf)
+					node = node->left_;
+			}
+			return (node);
+		}
+
+		Node	*prev(Node *node) const {
+			if (node->left_ == this->_leaf) {
+				while (node && node == node->parent_->right_)
+					node = node->parent_;
+				node = node->parent_;
+			}
+			else {
+				node = node->left_;
+				while (node->right_ != this->_leaf)
+					node = node->right_;
+			}
+			return (node);
+		}
+
+		// void	pre_order(Node *node) const {
+		// 	if(this->_root != this->_leaf) {
+		// 		std::cout << "----------------------------------------" << std::endl;
+		// 		std::cout << "| Node            | " << this->_root->data_.first << "                   |" << std::endl;
+		// 		std::cout << "| Adresse node    | " << &this->_root << "      |" << std::endl;
+		// 		if(this->_root->parent_ && this->_root->parent_ != this->_leaf) {
+		// 			std::cout << "| Parent          | " << this->_root->parent_->data_.first << "                   |" << std::endl;
+		// 			Node * next = this->next(this->_root);
+		// 			Node * prev = this->prev(this->_root);
+		// 			if (next)
+		// 				std::cout << "| Next            | " << next->data_.first << "                   |" << std::endl;
+		// 			else
+		// 				std::cout << "| Next            | None                |" << std::endl;
+		// 			if(prev)
+		// 				std::cout << "| Prev            | " << prev->data_.first << "                   |" << std::endl;
+		// 			else
+		// 				std::cout << "| Prev            | None                |" << std::endl;
+		// 		}
+		// 		if(this->_root->left_ != this->_leaf)
+		// 			std::cout << "| Left child      | " << this->_root->left_->data_.first << "                   |" << std::endl;
+		// 		else
+		// 			std::cout << "| Left child      | None                |" << std::endl;
+		// 		if(this->_root->right_ != this->_leaf)
+		// 			std::cout << "| Right child     | " << this->_root->right_->data_.first << "                   |" << std::endl;
+		// 		else
+		// 			std::cout << "| Right child     | None                |" << std::endl;
+		// 		std::cout << "----------------------------------------" << std::endl;
+		// 		std::cout << std::endl;
+		// 		this->pre_order(this->_root->left_);
+		// 		this->pre_order(this->_root->right_);
+		// 	}
+		// }
 
 		Node	*newNode(value_type data, bool color) {
 			Node	*tmp = this->_node_alloc.allocate(1);
