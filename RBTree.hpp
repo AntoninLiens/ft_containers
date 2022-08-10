@@ -6,14 +6,14 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/10 14:47:39 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/10 16:43:57 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RBTREE_HPP
 # define RBTREE_HPP
 
-#include "iterator.hpp"
+// #include "iterator.hpp"
 #include "pair.hpp"
 #include <memory>
 #include <iostream>
@@ -137,35 +137,6 @@ namespace ft {
 			return (node = this->balanceInsertRB(node));
 		}
 
-		// node_type	*deleteNode(node_type *node, key_type key) {
-		// 	if (node == this->_leaf)
-		// 		return (node);
-		// 	else if (this->_cmp(key, node->data_.first))
-		// 		node->left_ = this->deleteNode(node->left_, key);
-		// 	else if (this->_cmp(node->data_.first, key))
-		// 		node->right_ = this->deleteNode(node->right_, key);
-		// 	else {
-		// 		if (node->left_ == this->_leaf && node->right_ == this->_leaf)
-		// 			return (this->_leaf);
-		// 		else if (node->left_ == this->_leaf) {
-		// 			node_type	*tmp = node->right_;
-		// 			this->_alloc.destroy(&node->data_);
-		// 			this->_node_alloc.deallocate(node, 1);
-		// 			return (tmp);
-		// 		}
-		// 		else if (node->right_ == this->_leaf) {
-		// 			node_type	*tmp = node->left_;
-		// 			this->_alloc.destroy(&node->data_);
-		// 			this->_node_alloc.deallocate(node, 1);
-		// 			return (tmp);
-		// 		}
-		// 		node_type	*tmp = this->minValNode(node->right_);
-		// 		node->data_ = tmp->data_;
-		// 		node->right_ = this->deleteNode(node->right_, tmp->data_.first);
-		// 	}
-		// 	return (node);
-		// }
-
 		node_type	*deleteNode(node_type *node, key_type key) {
 			if (node == this->_leaf)
 				return (node);
@@ -174,48 +145,26 @@ namespace ft {
 			else if (this->_cmp(node->data_.first, key))
 				node->right_ = this->deleteNode(node->right_, key);
 			else {
-				node_type	*tmp = this->_leaf;
-				if (node->left_ == this->_leaf || node->right_ == this->_leaf) {
-					tmp = this->_leaf;
-					if (tmp == this->_leaf) {
-						tmp = node;
-						node = this->_leaf;
-					}
-					else {
-						if (node->left_ == this->_leaf) {
-							node_type	*tmparent = node->parent_;
-							tmp = node;
-							node = node->right_;
-							node->parent_ = tmparent;
-						}
-						else if (node->right_ == this->_leaf) {
-							node_type	*tmparent = node->parent_;
-							tmp = node;
-							node = node->right_;
-							node->parent_ = tmparent;
-						}
-					}
-					if (tmp->parent_ == NULL && tmp->left_ == this->_leaf && tmp->right_ == this->_leaf) {
-						this->_alloc.destroy(&tmp->data_);
-						this->_node_alloc.deallocate(tmp, 1);
-						this->_root = this->_leaf;
-					}
-					else {
-						if (this->_root == tmp)
-							this->_root = node;
-						this->_alloc.destroy(&tmp->data_);
-						this->_node_alloc.deallocate(tmp, 1);
-					}
+				if (node->left_ == this->_leaf && node->right_ == this->_leaf)
+					return (this->_leaf);
+				else if (node->left_ == this->_leaf) {
+					node_type	*tmp = node->right_;
+					this->_alloc.destroy(&node->data_);
+					this->_node_alloc.deallocate(node, 1);
+					return (tmp);
 				}
-				else if (node->left_ != this->_leaf && node->right_ != this->_leaf) {
-					tmp = minValNode(node->right_); 
-					this->_alloc.destroy(&node->data_); 
-					this->_alloc.construct(&node->data_, tmp->data_);
-					node->color_ = tmp->color_;
-					node->right_ = deleteNode(node->right_, node->data_.first);
+				else if (node->right_ == this->_leaf) {
+					node_type	*tmp = node->left_;
+					this->_alloc.destroy(&node->data_);
+					this->_node_alloc.deallocate(node, 1);
+					return (tmp);
 				}
+				node_type	*tmp = this->minValNode(node->right_);
+				this->_alloc.destroy(&node->data_);
+				this->_alloc.construct(&node->data_, tmp->data_);
+				node->right_ = this->deleteNode(node->right_, tmp->data_.first);
 			}
-			return (node);
+			return (node = this->balanceInsertRB(node));
 		}
 
 	/******************************************_OPERATIONS_******************************************/

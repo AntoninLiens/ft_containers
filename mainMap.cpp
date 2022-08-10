@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/10 14:24:07 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/10 16:36:33 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int main(void) {
 
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
-	binaryTree.deleteNode(binaryTree.get_root(), 7);
+	binaryTree.deleteNode(binaryTree.get_root(), 3);
 	
 	binaryTree.aff_tree(binaryTree.get_root(), 0);
 
