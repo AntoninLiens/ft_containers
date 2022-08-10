@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/04 16:40:51 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/10 14:46:14 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define ITERATOR_HPP
 
 #include <cstddef>
+#include "RBTree.hpp"
 
 namespace ft {
 	
@@ -374,6 +375,87 @@ namespace ft {
 	reverse_iterator<It>	operator-(typename reverse_iterator<It>::difference_type n, const reverse_iterator<It>& it) {
 		return (reverse_iterator<It>(it.base() + n));
 	}
+
+	/*************************************************************************************************
+												MAP_ITERATOR
+	**************************************************************************************************/
+
+	template<class Node, class Pointer = Node *, class Reference = Node &>
+	class map_iterator {
+	public:
+		typedef	Node		node_type;
+		typedef Pointer		pointer;
+		typedef	Reference	reference;
+
+	/******************************************_CONST_OPERATOR_******************************************/
+
+		operator map_iterator<const pointer>(void) const {
+			return (this->_node);
+		}
+
+	/******************************************_CONSTRUCTORS_******************************************/
+
+		map_iterator(void) {
+			this->_node = ft::RBTree::newNode(ft::RBTree::value_type(), false);
+			this->_node->left_ = NULL;
+			this->_node->right_ = NULL;
+		}
+
+		map_iterator(pointer node) : _node(node) {}
+
+		map_iterator(const map_iterator<node_type>& it) : _node(it.get_node()) {}
+
+	/******************************************_DESTRUCTOR_******************************************/
+
+		~map_iterator(void) {}
+
+	/******************************************_GET_NODE_******************************************/
+
+		pointer	get_node(void) const {
+			return (this->_node);
+		}
+
+	/******************************************_DEREFERENCED_OPERATORS_******************************************/
+	
+		reference	operator*(void) const {
+			return (*this->_node);
+		}
+
+		pointer	operator->(void) const {
+			return (this->_node);
+		}
+
+	/******************************************_INCREMENT/DECREMENT_OPERATORS_******************************************/
+
+		map_iterator&	operator++(void) {
+			this->_node = ft::RBTree::next(this->_node);
+			return (map_iterator(this->_node));
+		}
+
+		map_iterator	operator++(int n) {
+			static_cast<void>(n);
+			pointer	tmp = this->_node;
+			this->_node = ft::RBTree::next(this->_node);
+			return (tmp);
+		}
+
+		map_iterator&	operator--(void) {
+			this->_node = ft::RBTree::prev(this->_node);
+			return (map_iterator(this->_node));
+		}
+
+		map_iterator	operator--(int n) {
+			static_cast<void>(n);
+			pointer	tmp = this->_node;
+			this->_node = ft::RBTree::prev(this->_node);
+			return (map_iterator(tmp));
+		}
+
+	private:
+		pointer	_node;
+
+	};
+
 }
 
 #endif

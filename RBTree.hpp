@@ -6,13 +6,14 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/09 17:51:30 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/10 14:47:39 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RBTREE_HPP
 # define RBTREE_HPP
 
+#include "iterator.hpp"
 #include "pair.hpp"
 #include <memory>
 #include <iostream>
@@ -42,12 +43,15 @@ namespace ft {
 	public:
 		typedef Key													key_type;
 		typedef T													mapped_type;
+		typedef Node												node_type;
 		typedef ft::pair<const Key,T>								value_type;
 		typedef Compare												key_compare;
 		typedef std::allocator<ft::pair<const Key,T> >				allocator_type;
 		typedef std::allocator<ft::Node<const Key,T> >				node_allocator_type;
 		typedef int													difference_type;
 		typedef size_t												size_type;
+		typedef ft::map_iterator<node_type>							iterator;
+		typedef ft::map_iterator<const node_type>					const_iterator;
 		
 	/******************************************_CONSTRUCTORS_******************************************/
 
@@ -61,7 +65,8 @@ namespace ft {
 			this->_root = this->_leaf;
 		}
 
-		RBTree(const RBTree& tree) {}
+		RBTree(const RBTree& tree)
+		: _cmp(tree.get_compare()), _alloc(tree.get_allocator()), _node_alloc(tree.get_node_alloc()), _ll(false), _rl(false), _rr(false), _lr(false), _f(false) {}
 
 	/******************************************_DESTRUCTOR_******************************************/
 
@@ -69,21 +74,47 @@ namespace ft {
 
 	/******************************************_GETTERS_******************************************/
 
-		Node	*get_root(void) const {
+		node_type	*get_root(void) const {
 			return (this->_root);
 		}
 
-		Node	*get_leaf(void) const {
+		node_type	*get_leaf(void) const {
 			return (this->_leaf);
+		}
+
+		key_compare	get_compare(void) const {
+			return (this->_cmp);
+		}
+
+		allocator_type	get_allocator(void) const {
+			return (this->_alloc);
 		}
 
 		node_allocator_type	get_node_alloc(void) const {
 			return (this->_node_alloc);
 		}
 
+	/******************************************_ITERATORS_******************************************/
+
+		iterator	begin(void) {
+			return (iterator(this->_root));
+		}
+
+		const_iterator	begin(void) const {
+			return (const_iterator(this->_root));
+		}
+
+		iterator	end(void) {
+			return (iterator(this->_leaf));
+		}
+
+		const_iterator	end(void) const {
+			return (const_iterator(this->_leaf));
+		}
+
 	/******************************************_MODIFIERS_******************************************/
 
-		Node	*insertNode(Node *node, value_type data) {
+		node_type	*insertNode(node_type *node, value_type data) {
 			if (this->_root == this->_leaf)
 				return (this->_root = newNode(data, false));
 			else if (node == this->_leaf)
@@ -106,7 +137,7 @@ namespace ft {
 			return (node = this->balanceInsertRB(node));
 		}
 
-		// Node	*deleteNode(Node *node, key_type key) {
+		// node_type	*deleteNode(node_type *node, key_type key) {
 		// 	if (node == this->_leaf)
 		// 		return (node);
 		// 	else if (this->_cmp(key, node->data_.first))
@@ -117,25 +148,25 @@ namespace ft {
 		// 		if (node->left_ == this->_leaf && node->right_ == this->_leaf)
 		// 			return (this->_leaf);
 		// 		else if (node->left_ == this->_leaf) {
-		// 			Node	*tmp = node->right_;
+		// 			node_type	*tmp = node->right_;
 		// 			this->_alloc.destroy(&node->data_);
 		// 			this->_node_alloc.deallocate(node, 1);
 		// 			return (tmp);
 		// 		}
 		// 		else if (node->right_ == this->_leaf) {
-		// 			Node	*tmp = node->left_;
+		// 			node_type	*tmp = node->left_;
 		// 			this->_alloc.destroy(&node->data_);
 		// 			this->_node_alloc.deallocate(node, 1);
 		// 			return (tmp);
 		// 		}
-		// 		Node	*tmp = this->minValNode(node->right_);
+		// 		node_type	*tmp = this->minValNode(node->right_);
 		// 		node->data_ = tmp->data_;
 		// 		node->right_ = this->deleteNode(node->right_, tmp->data_.first);
 		// 	}
 		// 	return (node);
 		// }
 
-		Node	*deleteNode(Node *node, key_type key) {
+		node_type	*deleteNode(node_type *node, key_type key) {
 			if (node == this->_leaf)
 				return (node);
 			else if (this->_cmp(key, node->data_.first))
@@ -143,7 +174,7 @@ namespace ft {
 			else if (this->_cmp(node->data_.first, key))
 				node->right_ = this->deleteNode(node->right_, key);
 			else {
-				Node	*tmp = this->_leaf;
+				node_type	*tmp = this->_leaf;
 				if (node->left_ == this->_leaf || node->right_ == this->_leaf) {
 					tmp = this->_leaf;
 					if (tmp == this->_leaf) {
@@ -152,13 +183,13 @@ namespace ft {
 					}
 					else {
 						if (node->left_ == this->_leaf) {
-							Node	*tmparent = node->parent_;
+							node_type	*tmparent = node->parent_;
 							tmp = node;
 							node = node->right_;
 							node->parent_ = tmparent;
 						}
 						else if (node->right_ == this->_leaf) {
-							Node	*tmparent = node->parent_;
+							node_type	*tmparent = node->parent_;
 							tmp = node;
 							node = node->right_;
 							node->parent_ = tmparent;
@@ -184,14 +215,24 @@ namespace ft {
 					node->right_ = deleteNode(node->right_, node->data_.first);
 				}
 			}
+			return (node);
+		}
+
+	/******************************************_OPERATIONS_******************************************/
+
+		node_type	*searchNode(node_type *node, key_type key) {
 			if (node == this->_leaf)
 				return (node);
+			else if (this->_cmp(key, node->data_.first))
+				node = this->searchNode(node->left_, key);
+			else if (this->_cmp(node->data_.first, key))
+				node = this->searchNode(node->right_, key);
 			return (node);
 		}
 
 	/******************************************_BALANCE_******************************************/
 
-		Node	*balanceInsertRB(Node *node) {
+		node_type	*balanceInsertRB(node_type *node) {
 			if (this->_ll) {
 				node = this->rotateLeft(node);
 				node->color_ = false;
@@ -254,10 +295,10 @@ namespace ft {
 			return (node);
 		}
 
-		Node	*rotateLeft(Node *node) {
-			Node	*tmpA = node->right_;
-			Node	*tmpB = tmpA->left_;
-			Node	*tmparent = node->parent_;
+		node_type	*rotateLeft(node_type *node) {
+			node_type	*tmpA = node->right_;
+			node_type	*tmpB = tmpA->left_;
+			node_type	*tmparent = node->parent_;
 
 			tmpA->left_ = node;
 			node->right_ = tmpB;
@@ -269,10 +310,10 @@ namespace ft {
 			return (tmpA);
 		}
 
-		Node	*rotateRight(Node *node) {
-			Node	*tmpA = node->left_;
-			Node	*tmpB = tmpA->right_;
-			Node	*tmparent = node->parent_;
+		node_type	*rotateRight(node_type *node) {
+			node_type	*tmpA = node->left_;
+			node_type	*tmpB = tmpA->right_;
+			node_type	*tmparent = node->parent_;
 
 			tmpA->right_ = node;
 			node->left_ = tmpB;
@@ -286,13 +327,13 @@ namespace ft {
 
 	/******************************************_PRINT_TREE_******************************************/
 
-		void	aff_node(Node *node) const {
+		void	aff_node(node_type *node) const {
 			std::string	color;
 			node->color_ ? color = "red" : color = "black";			
 			std::cout << node->data_.first << " | " << node->data_.second << " | " << color << std::endl;
 		}
 
-		void	aff_tree(Node *node, int space) const {
+		void	aff_tree(node_type *node, int space) const {
 			int i;
         	if(node != this->_leaf) {
         	    space = space + 10;
@@ -308,7 +349,7 @@ namespace ft {
 
 	/******************************************_UTILS_******************************************/
 
-		Node	*next(Node *node) const {
+		node_type	*next(node_type *node) const {
 			if (node->right_ == this->_leaf) {
 				while (node && node == node->parent_->right_)
 					node = node->parent_;
@@ -322,7 +363,7 @@ namespace ft {
 			return (node);
 		}
 
-		Node	*prev(Node *node) const {
+		node_type	*prev(node_type *node) const {
 			if (node->left_ == this->_leaf) {
 				while (node && node == node->parent_->right_)
 					node = node->parent_;
@@ -336,41 +377,8 @@ namespace ft {
 			return (node);
 		}
 
-		// void	pre_order(Node *node) const {
-		// 	if(this->_root != this->_leaf) {
-		// 		std::cout << "----------------------------------------" << std::endl;
-		// 		std::cout << "| Node            | " << this->_root->data_.first << "                   |" << std::endl;
-		// 		std::cout << "| Adresse node    | " << &this->_root << "      |" << std::endl;
-		// 		if(this->_root->parent_ && this->_root->parent_ != this->_leaf) {
-		// 			std::cout << "| Parent          | " << this->_root->parent_->data_.first << "                   |" << std::endl;
-		// 			Node * next = this->next(this->_root);
-		// 			Node * prev = this->prev(this->_root);
-		// 			if (next)
-		// 				std::cout << "| Next            | " << next->data_.first << "                   |" << std::endl;
-		// 			else
-		// 				std::cout << "| Next            | None                |" << std::endl;
-		// 			if(prev)
-		// 				std::cout << "| Prev            | " << prev->data_.first << "                   |" << std::endl;
-		// 			else
-		// 				std::cout << "| Prev            | None                |" << std::endl;
-		// 		}
-		// 		if(this->_root->left_ != this->_leaf)
-		// 			std::cout << "| Left child      | " << this->_root->left_->data_.first << "                   |" << std::endl;
-		// 		else
-		// 			std::cout << "| Left child      | None                |" << std::endl;
-		// 		if(this->_root->right_ != this->_leaf)
-		// 			std::cout << "| Right child     | " << this->_root->right_->data_.first << "                   |" << std::endl;
-		// 		else
-		// 			std::cout << "| Right child     | None                |" << std::endl;
-		// 		std::cout << "----------------------------------------" << std::endl;
-		// 		std::cout << std::endl;
-		// 		this->pre_order(this->_root->left_);
-		// 		this->pre_order(this->_root->right_);
-		// 	}
-		// }
-
-		Node	*newNode(value_type data, bool color) {
-			Node	*tmp = this->_node_alloc.allocate(1);
+		node_type	*newNode(value_type data, bool color) {
+			node_type	*tmp = this->_node_alloc.allocate(1);
 			this->_alloc.construct(&tmp->data_, data);
 			tmp->left_ = this->_leaf;
 			tmp->right_ = this->_leaf;
@@ -379,19 +387,19 @@ namespace ft {
 			return (tmp);
 		}
 
-		Node	*maxValNode(Node *node) {
+		node_type	*maxValNode(node_type *node) {
 			if (node && node->right_ != this->_leaf)
 				this->maxValNode(node->right_);
 			return (node);
 		}
 
-		Node	*minValNode(Node *node) {
+		node_type	*minValNode(node_type *node) {
 			if (node && node->left_ != this->_leaf)
 				this->minValNode(node->left_);
 			return (node);
 		}
 
-		size_type	height(Node *node) {
+		size_type	height(node_type *node) {
 			if (node == this->_leaf)
 				return (0);
 			else {
@@ -404,7 +412,7 @@ namespace ft {
 			}
 		}
 
-		size_type nodeCount(Node *node) {
+		size_type nodeCount(node_type *node) {
 		    if (node == this->_leaf)
 		        return (0);
 		    else
@@ -412,8 +420,8 @@ namespace ft {
 		}
 
 	private:
-		Node				*_root;
-		Node				*_leaf;
+		node_type				*_root;
+		node_type				*_leaf;
 		key_compare			_cmp;
 		bool				_ll;
 		bool				_rl;

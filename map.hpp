@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/09 17:31:37 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/10 14:14:59 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ namespace ft {
 													MAP
 	**************************************************************************************************/
 	
-	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T>>>
+	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T>>>
 	class map {
 	public:
 		typedef Key												key_type;
@@ -35,8 +35,8 @@ namespace ft {
 		typedef allocator_type::const_reference					const_reference;
 		typedef allocator_type::pointer							pointer;
 		typedef allocator_type::const_pointer					const_pointer;
-		typedef ft::random_access_iterator<value_type>			iterator;
-		typedef ft::random_access_iterator<const value_type>	const_iterator;
+		typedef ft::map_iterator<ft::RBTree::node_type>			iterator;
+		typedef ft::map_iterator<const ft::RBTree::node_type>	const_iterator;
 		typedef	ft::reverse_iterator<iterator>					reverse_iterator;
 		typedef	ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 		typedef ft::iterator_traits::difference_type			difference_type;
