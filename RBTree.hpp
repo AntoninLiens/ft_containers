@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/09 12:40:00 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/09 17:51:30 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,35 @@ namespace ft {
 			return (node = this->balanceInsertRB(node));
 		}
 
+		// Node	*deleteNode(Node *node, key_type key) {
+		// 	if (node == this->_leaf)
+		// 		return (node);
+		// 	else if (this->_cmp(key, node->data_.first))
+		// 		node->left_ = this->deleteNode(node->left_, key);
+		// 	else if (this->_cmp(node->data_.first, key))
+		// 		node->right_ = this->deleteNode(node->right_, key);
+		// 	else {
+		// 		if (node->left_ == this->_leaf && node->right_ == this->_leaf)
+		// 			return (this->_leaf);
+		// 		else if (node->left_ == this->_leaf) {
+		// 			Node	*tmp = node->right_;
+		// 			this->_alloc.destroy(&node->data_);
+		// 			this->_node_alloc.deallocate(node, 1);
+		// 			return (tmp);
+		// 		}
+		// 		else if (node->right_ == this->_leaf) {
+		// 			Node	*tmp = node->left_;
+		// 			this->_alloc.destroy(&node->data_);
+		// 			this->_node_alloc.deallocate(node, 1);
+		// 			return (tmp);
+		// 		}
+		// 		Node	*tmp = this->minValNode(node->right_);
+		// 		node->data_ = tmp->data_;
+		// 		node->right_ = this->deleteNode(node->right_, tmp->data_.first);
+		// 	}
+		// 	return (node);
+		// }
+
 		Node	*deleteNode(Node *node, key_type key) {
 			if (node == this->_leaf)
 				return (node);
@@ -116,7 +145,7 @@ namespace ft {
 			else {
 				Node	*tmp = this->_leaf;
 				if (node->left_ == this->_leaf || node->right_ == this->_leaf) {
-					tmp = node->left_ != this->_leaf ? node->left_ : node->right_;
+					tmp = this->_leaf;
 					if (tmp == this->_leaf) {
 						tmp = node;
 						node = this->_leaf;
