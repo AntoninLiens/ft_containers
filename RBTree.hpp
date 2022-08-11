@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/11 19:02:52 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/12 01:13:22 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ namespace ft {
 		Node					*right_;
 		Node					*parent_;
 		bool					color_;
+		bool					temp_;
 
 	};
 
@@ -116,9 +117,9 @@ namespace ft {
 
 		node_type	*insertNode(node_type *node, value_type data) {
 			if (this->_root == this->_leaf)
-				return (this->_root = newNode(data, false));
+				return (this->_root = newNode(data, false, false));
 			else if (node == this->_leaf)
-				return (node = newNode(data, true));
+				return (node = newNode(data, true, false));
 			else if (this->_cmp(data.first, node->data_.first)) {
 				node->left_ = this->insertNode(node->left_, data);
 				node->left_->parent_ = node;
@@ -139,13 +140,19 @@ namespace ft {
 
 		node_type	*deleteNode(node_type *node, key_type key) {
 			node = this->findNode(this->_root, key);
+			if (node == this->_leaf)
+				return (node);
 			if (node->left_ == this->_leaf && node->right_ == this->_leaf) {
-				// if (node->color_ || node == this->_root) {
+				if (node->color_ || node == this->_root) {
 					this->_alloc.destroy(&node->data_);
 					this->_node_alloc.deallocate(node, 1);
-				// }
-				// else if (!node->color_)
-				// 	this->balanceDelRB(node);
+				}
+				else if (!node->color_) {
+					node_type	*db_node = newNode(value_type(), false, true);
+					db_node->parent_ = node->parent_;
+					node->parent_->left_ == node ? node->parent_->left_ = db_node : node->parent_->right_ = db_node;
+					this->balanceDelRB(db_node);
+				}
 			}
 			else {
 				node_type	*tmp = this->maxValNode(node->left_);
@@ -153,33 +160,27 @@ namespace ft {
 					if (tmp->left_ != this->_leaf) {
 						tmp->color_ = false;
 						tmp->left_->parent_ = tmp->parent_;
-						if (tmp->parent_->left_ == tmp)
-							tmp->parent_->left_ = tmp->left_;
-						else
-							tmp->parent_->right_ = tmp->left_;
+						tmp->parent_->left_ == tmp ? tmp->parent_->left_ = tmp->left_ : tmp->parent_->right_ = tmp->left_;
 					}
 					else {
 						tmp->color_ = false;
 						tmp->right_->parent_ = tmp->parent_;
-						if (tmp->parent_->left_ == tmp)
-							tmp->parent_->left_ = tmp->right_;
-						else
-							tmp->parent_->right_ = tmp->right_;
+						tmp->parent_->left_ == tmp ? tmp->parent_->left_ = tmp->right_ : tmp->parent_->right_ = tmp->right_;
 					}
 					node = this->swapNode(node, tmp);
 				}
 				else {
-					// if (tmp->color_) {
-						if (tmp->parent_->left_ == tmp)
-							tmp->parent_->left_ = this->_leaf;
-						else
-							tmp->parent_->right_ = this->_leaf;
+					if (tmp->color_) {
+						tmp->parent_->left_ == tmp ? tmp->parent_->left_ = this->_leaf : tmp->parent_->right_ = this->_leaf;
 						node = this->swapNode(node, tmp);
-					// }
-					// else {
-					// 	node = this->swapNode(node, tmp);
-					// 	this->balanceDelRB(node);
-					// }
+					}
+					else {
+						node_type	*db_node = newNode(value_type(), false, true);
+						db_node->parent_ = tmp->parent_;
+						tmp->parent_->left_ == tmp ? tmp->parent_->left_ = db_node : tmp->parent_->right_ = db_node;
+						node = this->swapNode(node, tmp);
+						this->balanceDelRB(db_node);
+					}
 				}
 			}
 			return (node);
@@ -278,63 +279,64 @@ namespace ft {
 			return (node);
 		}
 
-		// node_type	*balanceDelRB(node_type	*db_node) {
-		// 	node_type	*sibling = db_node->parent_->right_ == db_node ? db_node->left_ : db_node->right_;
-		// 	bool	b2o = db_node->parent_->right_ == db_node ? false : true;
-		// 	if (sibling->color_) {
-		// 		bool	tmp_color = db_node->parent_->color_;
-		// 		db_node->parent_->color_ = sibling->color_;
-		// 		sibling->color_ = tmp_color;
-		// 		if (b2o)
-		// 			this->rotateLeft(db_node->parent_);
-		// 		else
-		// 			this->rotateRight(db_node->parent_);
-		// 		this->deleteNode(db_node, db_node->data_.first);
-		// 	}
-		// 	else {
-		// 		node_type	*far_child_of_sibling = b2o ? sibling->right_ : sibling->left_;
-		// 		if (far_child_of_sibling->color_) {
-		// 			bool	tmp_color = db_node->parent_->color_;
-		// 			db_node->parent_->color_ = sibling->color_;
-		// 			sibling->color_ = tmp_color;
-		// 			if (b2o)
-		// 				this->rotateLeft(db_node->parent_);
-		// 			else
-		// 				this->rotateRight(db_node->parent_);
-		// 			far_child_of_sibling->color_ = false;
-		// 		}
-		// 		else {
-		// 			node_type	*near_child_of_sibling = b2o ? sibling->left_ : sibling->right_;
-		// 			if (!near_child_of_sibling->color_) {
-		// 				this->_alloc.destroy(&db_node->data_);
-		// 				this->_node_alloc.deallocate(db_node, 1);
-		// 				sibling->color_ = true;
-		// 				if (!sibling->parent_->color_)
-		// 					this->balanceDelRB(sibling->parent_);
-		// 				else
-		// 					sibling->parent_->color_ = false;
-		// 			}
-		// 			else {
-		// 				node_type	*sibling_red_child = sibling->left_->color_ ? sibling->left_ : sibling->right_;
-		// 				sibling_red_child->color_ = sibling->color_;
-		// 				sibling->color_ = true;
-		// 				if (b2o)
-		// 					this->rotateRight(sibling);
-		// 				else
-		// 					this->rotateLeft(sibling);
-		// 				bool	tmp_color = db_node->parent_->color_;
-		// 				db_node->parent_->color_ = sibling->color_;
-		// 				sibling->color_ = tmp_color;
-		// 				if (b2o)
-		// 					this->rotateLeft(db_node->parent_);
-		// 				else
-		// 					this->rotateRight(db_node->parent_);
-		// 				far_child_of_sibling->color_ = false;
-		// 			}
-		// 		}
-		// 	}
-		// 	return (db_node);
-		// }
+		node_type	*balanceDelRB(node_type	*db_node) {
+			if (db_node->parent_ == NULL) {
+				db_node->color_ = false;
+				return (db_node);
+			}
+			node_type	*sibling;
+			db_node->parent_->right_ == db_node ? sibling = db_node->parent_->left_ : sibling = db_node->parent_->right_;
+			if (sibling->color_) {
+				if (sibling->color_ != db_node->parent_->color_) {
+					bool	tmp_color = db_node->parent_->color_;
+					db_node->parent_->color_ = sibling->color_;
+					sibling->color_ = tmp_color;
+				}
+				db_node->parent_->left_ == db_node ? this->rotateLeft(db_node->parent_) : this->rotateRight(db_node->parent_);
+				this->balanceDelRB(db_node);
+			}
+			else {
+				node_type	*far_child_of_sibling;
+				db_node->parent_->left_ == db_node ? far_child_of_sibling = sibling->right_ : far_child_of_sibling = sibling->left_;
+				node_type	*near_child_of_sibling;
+				db_node->parent_->left_ == db_node ? near_child_of_sibling = sibling->left_ : near_child_of_sibling = sibling->right_;
+				if (far_child_of_sibling != this->_leaf && far_child_of_sibling->color_) {
+					if (sibling->color_ != db_node->parent_->color_) {
+						bool	tmp_color = db_node->parent_->color_;
+						db_node->parent_->color_ = sibling->color_;
+						sibling->color_ = tmp_color;
+					}
+					db_node->parent_->left_ == db_node ? this->rotateLeft(db_node->parent_) : this->rotateRight(db_node->parent_);
+					far_child_of_sibling->color_ = false;
+					if (db_node->temp_) {
+						db_node->parent_->left_ == db_node ? db_node->parent_->left_ = this->_leaf : db_node->parent_->right_ = this->_leaf;
+						this->_alloc.destroy(&db_node->data_);
+						this->_node_alloc.deallocate(db_node, 1);
+					}
+				}
+				else if (near_child_of_sibling != this->_leaf && near_child_of_sibling->color_) {
+					sibling->color_ = true;
+					near_child_of_sibling->color_ = false;
+					db_node->parent_->left_ == db_node ? this->rotateRight(sibling) : this->rotateLeft(sibling);
+					this->balanceDelRB(db_node);
+				}
+				else {
+					node_type	*tmparent = db_node->parent_;
+					if (sibling != this->_leaf);
+						sibling->color_ = true;
+					if (db_node->temp_) {
+						db_node->parent_->left_ == db_node ? db_node->parent_->left_ = this->_leaf : db_node->parent_->right_ = this->_leaf;
+						this->_alloc.destroy(&db_node->data_);
+						this->_node_alloc.deallocate(db_node, 1);
+					}
+					if (tmparent->color_)
+						tmparent->color_ = false;
+					else
+						this->balanceDelRB(tmparent);
+				}
+			}
+			return (db_node);
+		}
 
 		node_type	*rotateLeft(node_type *node) {
 			node_type	*tmpA = node->right_;
@@ -418,13 +420,14 @@ namespace ft {
 			return (node);
 		}
 
-		node_type	*newNode(value_type data, bool color) {
+		node_type	*newNode(value_type data, bool color, bool temp) {
 			node_type	*tmp = this->_node_alloc.allocate(1);
 			this->_alloc.construct(&tmp->data_, data);
 			tmp->left_ = this->_leaf;
 			tmp->right_ = this->_leaf;
 			tmp->parent_ = NULL;
 			tmp->color_ = color;
+			tmp->temp_ = temp;
 			return (tmp);
 		}
 
