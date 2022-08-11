@@ -6,14 +6,14 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/10 16:43:57 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/11 19:02:52 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RBTREE_HPP
 # define RBTREE_HPP
 
-// #include "iterator.hpp"
+#include "iterator.hpp"
 #include "pair.hpp"
 #include <memory>
 #include <iostream>
@@ -38,13 +38,13 @@ namespace ft {
 												RED_BLACK_TREE
 	**************************************************************************************************/
 
-	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> >, class Node = ft::Node<const Key, T> >
+	template <class Key, class T, class Compare = std::less<Key> >
 	class RBTree {
 	public:
 		typedef Key													key_type;
 		typedef T													mapped_type;
-		typedef Node												node_type;
-		typedef ft::pair<const Key,T>								value_type;
+		typedef ft::Node<const Key, T>								node_type;
+		typedef ft::pair<const Key, T>								value_type;
 		typedef Compare												key_compare;
 		typedef std::allocator<ft::pair<const Key,T> >				allocator_type;
 		typedef std::allocator<ft::Node<const Key,T> >				node_allocator_type;
@@ -56,7 +56,7 @@ namespace ft {
 	/******************************************_CONSTRUCTORS_******************************************/
 
 		RBTree(const key_compare& cmp = key_compare(), const allocator_type& alloc = allocator_type(), const node_allocator_type& node_alloc = node_allocator_type())
-		: _cmp(cmp), _alloc(alloc), _node_alloc(node_allocator_type()), _ll(false), _rl(false), _rr(false), _lr(false), _f(false) {
+		: _cmp(cmp), _alloc(alloc), _node_alloc(node_alloc), _ll(false), _rl(false), _rr(false), _lr(false), _f(false) {
 			this->_leaf = this->_node_alloc.allocate(1);
 			this->_alloc.construct(&this->_leaf->data_, value_type());
 			this->_leaf->left_ = NULL;
@@ -97,19 +97,19 @@ namespace ft {
 	/******************************************_ITERATORS_******************************************/
 
 		iterator	begin(void) {
-			return (iterator(this->_root));
+			return (iterator(this->_root, this->_leaf));
 		}
 
 		const_iterator	begin(void) const {
-			return (const_iterator(this->_root));
+			return (const_iterator(this->_root, this->_leaf));
 		}
 
 		iterator	end(void) {
-			return (iterator(this->_leaf));
+			return (iterator(this->_leaf, this->_leaf));
 		}
 
 		const_iterator	end(void) const {
-			return (const_iterator(this->_leaf));
+			return (const_iterator(this->_leaf, this->_leaf));
 		}
 
 	/******************************************_MODIFIERS_******************************************/
@@ -138,33 +138,51 @@ namespace ft {
 		}
 
 		node_type	*deleteNode(node_type *node, key_type key) {
-			if (node == this->_leaf)
-				return (node);
-			else if (this->_cmp(key, node->data_.first))
-				node->left_ = this->deleteNode(node->left_, key);
-			else if (this->_cmp(node->data_.first, key))
-				node->right_ = this->deleteNode(node->right_, key);
-			else {
-				if (node->left_ == this->_leaf && node->right_ == this->_leaf)
-					return (this->_leaf);
-				else if (node->left_ == this->_leaf) {
-					node_type	*tmp = node->right_;
+			node = this->findNode(this->_root, key);
+			if (node->left_ == this->_leaf && node->right_ == this->_leaf) {
+				// if (node->color_ || node == this->_root) {
 					this->_alloc.destroy(&node->data_);
 					this->_node_alloc.deallocate(node, 1);
-					return (tmp);
-				}
-				else if (node->right_ == this->_leaf) {
-					node_type	*tmp = node->left_;
-					this->_alloc.destroy(&node->data_);
-					this->_node_alloc.deallocate(node, 1);
-					return (tmp);
-				}
-				node_type	*tmp = this->minValNode(node->right_);
-				this->_alloc.destroy(&node->data_);
-				this->_alloc.construct(&node->data_, tmp->data_);
-				node->right_ = this->deleteNode(node->right_, tmp->data_.first);
+				// }
+				// else if (!node->color_)
+				// 	this->balanceDelRB(node);
 			}
-			return (node = this->balanceInsertRB(node));
+			else {
+				node_type	*tmp = this->maxValNode(node->left_);
+				if (tmp->left_ != this->_leaf || tmp->right_ != this->_leaf) {
+					if (tmp->left_ != this->_leaf) {
+						tmp->color_ = false;
+						tmp->left_->parent_ = tmp->parent_;
+						if (tmp->parent_->left_ == tmp)
+							tmp->parent_->left_ = tmp->left_;
+						else
+							tmp->parent_->right_ = tmp->left_;
+					}
+					else {
+						tmp->color_ = false;
+						tmp->right_->parent_ = tmp->parent_;
+						if (tmp->parent_->left_ == tmp)
+							tmp->parent_->left_ = tmp->right_;
+						else
+							tmp->parent_->right_ = tmp->right_;
+					}
+					node = this->swapNode(node, tmp);
+				}
+				else {
+					// if (tmp->color_) {
+						if (tmp->parent_->left_ == tmp)
+							tmp->parent_->left_ = this->_leaf;
+						else
+							tmp->parent_->right_ = this->_leaf;
+						node = this->swapNode(node, tmp);
+					// }
+					// else {
+					// 	node = this->swapNode(node, tmp);
+					// 	this->balanceDelRB(node);
+					// }
+				}
+			}
+			return (node);
 		}
 
 	/******************************************_OPERATIONS_******************************************/
@@ -177,6 +195,22 @@ namespace ft {
 			else if (this->_cmp(node->data_.first, key))
 				node = this->searchNode(node->right_, key);
 			return (node);
+		}
+
+		node_type	*findNode(node_type *node, key_type key) {
+			while (node != this->_leaf) {
+				if (this->_cmp(key, node->data_.first)) {
+					node = node->left_;
+					continue ;
+				}
+				else if (this->_cmp(node->data_.first, key)) {
+					node = node->right_;
+					continue ;
+				}
+				else
+					return (node);
+			}
+			return (this->_leaf);
 		}
 
 	/******************************************_BALANCE_******************************************/
@@ -243,6 +277,64 @@ namespace ft {
 			}
 			return (node);
 		}
+
+		// node_type	*balanceDelRB(node_type	*db_node) {
+		// 	node_type	*sibling = db_node->parent_->right_ == db_node ? db_node->left_ : db_node->right_;
+		// 	bool	b2o = db_node->parent_->right_ == db_node ? false : true;
+		// 	if (sibling->color_) {
+		// 		bool	tmp_color = db_node->parent_->color_;
+		// 		db_node->parent_->color_ = sibling->color_;
+		// 		sibling->color_ = tmp_color;
+		// 		if (b2o)
+		// 			this->rotateLeft(db_node->parent_);
+		// 		else
+		// 			this->rotateRight(db_node->parent_);
+		// 		this->deleteNode(db_node, db_node->data_.first);
+		// 	}
+		// 	else {
+		// 		node_type	*far_child_of_sibling = b2o ? sibling->right_ : sibling->left_;
+		// 		if (far_child_of_sibling->color_) {
+		// 			bool	tmp_color = db_node->parent_->color_;
+		// 			db_node->parent_->color_ = sibling->color_;
+		// 			sibling->color_ = tmp_color;
+		// 			if (b2o)
+		// 				this->rotateLeft(db_node->parent_);
+		// 			else
+		// 				this->rotateRight(db_node->parent_);
+		// 			far_child_of_sibling->color_ = false;
+		// 		}
+		// 		else {
+		// 			node_type	*near_child_of_sibling = b2o ? sibling->left_ : sibling->right_;
+		// 			if (!near_child_of_sibling->color_) {
+		// 				this->_alloc.destroy(&db_node->data_);
+		// 				this->_node_alloc.deallocate(db_node, 1);
+		// 				sibling->color_ = true;
+		// 				if (!sibling->parent_->color_)
+		// 					this->balanceDelRB(sibling->parent_);
+		// 				else
+		// 					sibling->parent_->color_ = false;
+		// 			}
+		// 			else {
+		// 				node_type	*sibling_red_child = sibling->left_->color_ ? sibling->left_ : sibling->right_;
+		// 				sibling_red_child->color_ = sibling->color_;
+		// 				sibling->color_ = true;
+		// 				if (b2o)
+		// 					this->rotateRight(sibling);
+		// 				else
+		// 					this->rotateLeft(sibling);
+		// 				bool	tmp_color = db_node->parent_->color_;
+		// 				db_node->parent_->color_ = sibling->color_;
+		// 				sibling->color_ = tmp_color;
+		// 				if (b2o)
+		// 					this->rotateLeft(db_node->parent_);
+		// 				else
+		// 					this->rotateRight(db_node->parent_);
+		// 				far_child_of_sibling->color_ = false;
+		// 			}
+		// 		}
+		// 	}
+		// 	return (db_node);
+		// }
 
 		node_type	*rotateLeft(node_type *node) {
 			node_type	*tmpA = node->right_;
@@ -336,16 +428,30 @@ namespace ft {
 			return (tmp);
 		}
 
+		node_type	*swapNode(node_type *to_replace, node_type *replace) {
+			if (to_replace->parent_ == NULL)
+				this->_root = replace;
+			else if (to_replace->parent_->left_ == to_replace)
+				to_replace->parent_->left_ = replace;
+			else
+				to_replace->parent_->right_ = replace;
+			replace->parent_ = to_replace->parent_;
+			replace->left_ = to_replace->left_;
+			replace->right_ = to_replace->right_;
+			replace->color_ = to_replace->color_;
+			return (replace);
+		}
+
 		node_type	*maxValNode(node_type *node) {
 			if (node && node->right_ != this->_leaf)
 				this->maxValNode(node->right_);
-			return (node);
+			return (node->right_);
 		}
 
 		node_type	*minValNode(node_type *node) {
 			if (node && node->left_ != this->_leaf)
 				this->minValNode(node->left_);
-			return (node);
+			return (node->left_);
 		}
 
 		size_type	height(node_type *node) {

@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/10 14:46:14 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/11 14:32:26 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -396,14 +396,15 @@ namespace ft {
 	/******************************************_CONSTRUCTORS_******************************************/
 
 		map_iterator(void) {
-			this->_node = ft::RBTree::newNode(ft::RBTree::value_type(), false);
+			this->_node = NULL;
 			this->_node->left_ = NULL;
 			this->_node->right_ = NULL;
+			this->_node->parent_ = NULL;
 		}
 
-		map_iterator(pointer node) : _node(node) {}
+		map_iterator(pointer node, pointer leaf) : _node(node), _leaf(leaf) {}
 
-		map_iterator(const map_iterator<node_type>& it) : _node(it.get_node()) {}
+		map_iterator(const map_iterator<node_type>& it) : _node(it.get_node()), _leaf(it.get_leaf()) {}
 
 	/******************************************_DESTRUCTOR_******************************************/
 
@@ -413,6 +414,10 @@ namespace ft {
 
 		pointer	get_node(void) const {
 			return (this->_node);
+		}
+
+		pointer	get_leaf(void) const {
+			return (this->_leaf);
 		}
 
 	/******************************************_DEREFERENCED_OPERATORS_******************************************/
@@ -428,31 +433,74 @@ namespace ft {
 	/******************************************_INCREMENT/DECREMENT_OPERATORS_******************************************/
 
 		map_iterator&	operator++(void) {
-			this->_node = ft::RBTree::next(this->_node);
-			return (map_iterator(this->_node));
+			this->_node = this->next(this->_node);
+			return (*this);
 		}
 
 		map_iterator	operator++(int n) {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
-			this->_node = ft::RBTree::next(this->_node);
-			return (tmp);
+			this->_node = this->next(this->_node);
+			return (map_iterator(tmp, this->_leaf));
 		}
 
 		map_iterator&	operator--(void) {
-			this->_node = ft::RBTree::prev(this->_node);
-			return (map_iterator(this->_node));
+			this->_node = this->prev(this->_node);
+			return (*this);
 		}
 
 		map_iterator	operator--(int n) {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
-			this->_node = ft::RBTree::prev(this->_node);
-			return (map_iterator(tmp));
+			this->_node = this->prev(this->_node);
+			return (map_iterator(tmp, this->_leaf));
+		}
+
+		/******************************************_UTILS_******************************************/
+
+		pointer	next(pointer node) const {
+			if (node->right_ == this->_leaf) {
+				while (node && node == node->parent_->right_)
+					node = node->parent_;
+				node = node->parent_;
+			}
+			else {
+				node = node->right_;
+				while (node->left_ != this->_leaf)
+					node = node->left_;
+			}
+			return (node);
+		}
+
+		pointer	prev(pointer node) const {
+			if (node->left_ == this->_leaf) {
+				while (node && node == node->parent_->right_)
+					node = node->parent_;
+				node = node->parent_;
+			}
+			else {
+				node = node->left_;
+				while (node->right_ != this->_leaf)
+					node = node->right_;
+			}
+			return (node);
+		}
+
+		pointer	maxValNode(pointer node) {
+			if (node && node->right_ != this->_leaf)
+				this->maxValNode(node->right_);
+			return (node);
+		}
+
+		pointer	minValNode(pointer node) {
+			if (node && node->left_ != this->_leaf)
+				this->minValNode(node->left_);
+			return (node);
 		}
 
 	private:
 		pointer	_node;
+		pointer	_leaf;
 
 	};
 
