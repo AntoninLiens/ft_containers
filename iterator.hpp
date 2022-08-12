@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/11 14:32:26 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/12 15:59:45 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <cstddef>
 #include "RBTree.hpp"
+#include <iostream>
 
 namespace ft {
 	
@@ -440,7 +441,13 @@ namespace ft {
 		map_iterator	operator++(int n) {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
+			std::cout << "**-----**" << std::endl;
+			this->aff_node(this->_node);
+			std::cout << "**-----**" << std::endl;
 			this->_node = this->next(this->_node);
+			std::cout << "**-----**" << std::endl;
+			this->aff_node(this->_node);
+			std::cout << "**-----**" << std::endl;
 			return (map_iterator(tmp, this->_leaf));
 		}
 
@@ -452,38 +459,56 @@ namespace ft {
 		map_iterator	operator--(int n) {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
+			std::cout << "**-----**" << std::endl;
+			this->aff_node(this->_node);
+			std::cout << "**-----**" << std::endl;
 			this->_node = this->prev(this->_node);
+			std::cout << "**-----**" << std::endl;
+			this->aff_node(this->_node);
+			std::cout << "**-----**" << std::endl;
 			return (map_iterator(tmp, this->_leaf));
 		}
 
 		/******************************************_UTILS_******************************************/
 
-		pointer	next(pointer node) const {
-			if (node->right_ == this->_leaf) {
-				while (node && node == node->parent_->right_)
-					node = node->parent_;
-				node = node->parent_;
-			}
-			else {
-				node = node->right_;
-				while (node->left_ != this->_leaf)
-					node = node->left_;
-			}
-			return (node);
+		void	aff_node(node_type *node) const {
+			std::string	color;
+			node->color_ ? color = "red" : color = "black";			
+			std::cout << node->data_.first << " | " << node->data_.second << " | " << color << std::endl;
 		}
 
-		pointer	prev(pointer node) const {
+		node_type	*next(node_type *node) {
+			node_type	*tmp;
+
+			// aff_node(node);
+			if (node->right_ == this->_leaf) {
+				tmp = node;
+				while (tmp->parent_ != this->_leaf && tmp == tmp->parent_->right_)
+					tmp = tmp->parent_;
+				tmp = tmp->parent_;
+				return (tmp);
+			}
+			tmp = node->right_;
+			while (tmp->left_ != this->_leaf)
+				tmp = tmp->left_;
+			return (tmp);
+		}
+
+		node_type	*prev(node_type *node) {
+			node_type	*tmp;
+
+			// aff_node(node);
 			if (node->left_ == this->_leaf) {
-				while (node && node == node->parent_->right_)
-					node = node->parent_;
-				node = node->parent_;
+				tmp = node;
+				while (tmp->parent_ != this->_leaf && tmp == tmp->parent_->left_)
+					tmp = tmp->parent_;
+				tmp = tmp->parent_;
+				return (tmp);
 			}
-			else {
-				node = node->left_;
-				while (node->right_ != this->_leaf)
-					node = node->right_;
-			}
-			return (node);
+			tmp = node->left_;
+			while (tmp->right_ != this->_leaf)
+				tmp = tmp->right_;
+			return (tmp);
 		}
 
 		pointer	maxValNode(pointer node) {

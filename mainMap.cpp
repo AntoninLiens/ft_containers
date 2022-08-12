@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/12 01:14:12 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/12 16:08:29 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,17 @@ int main(void) {
 	ft::RBTree<const int, char>	binaryTree;
 	ft::Node<const int, char>	*node = binaryTree.newNode(ft::make_pair(0, 0), false, false);
 
-	for (int i = 0, j = 0; i < 8; i++, j++) {
-		binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(i, 65 + j));
-	}
+	binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(50, 65));
+	binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(55, 65));
+	binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(35, 65));
+	binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(40, 65));
+	binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(20, 65));
+	binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(10, 65));
+	binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(5, 65));
+	binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(25, 65));
+	binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(17, 65));
 
 	binaryTree.aff_tree(binaryTree.get_root(), 0);
-
-	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
-
-	binaryTree.aff_node(binaryTree.searchNode(binaryTree.get_root(), 0));
-	binaryTree.aff_node(binaryTree.searchNode(binaryTree.get_root(), 5));
-	binaryTree.aff_node(binaryTree.searchNode(binaryTree.get_root(), 7));
-	binaryTree.aff_node(binaryTree.searchNode(binaryTree.get_root(), 3));
-
-	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
-
-	binaryTree.aff_node(binaryTree.next(binaryTree.get_root()));
 
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
@@ -41,7 +36,7 @@ int main(void) {
 
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
-	binaryTree.deleteNode(binaryTree.get_root(), 3);
+	binaryTree.deleteNode(binaryTree.get_root(), 20);
 	
 	binaryTree.aff_tree(binaryTree.get_root(), 0);
 
@@ -53,18 +48,21 @@ int main(void) {
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
 	ft::RBTree<const int, char>::iterator	it = binaryTree.begin();
-	//ft::RBTree<const int, char>::const_iterator	cit = binaryTree.begin();
-	binaryTree.aff_node(it.get_node());
-	//binaryTree.aff_node(cit.get_node());
-	it++;
-	//cit++;
-	binaryTree.aff_node(it.get_node());
-	//binaryTree.aff_node(cit.get_node());
-	it--;
-	//cit--;
-	binaryTree.aff_node(it.get_node());
-	//binaryTree.aff_node(cit.get_node());
+	// ft::RBTree<const int, char>::const_iterator	cit = binaryTree.begin();
+	// binaryTree.aff_node(it.get_node());
+	// binaryTree.aff_node(cit.get_node());
+	// it--;
+	// cit++;
+	// binaryTree.aff_node(it.get_node());
+	// binaryTree.aff_node(cit.get_node());
+	// it++;
+	// cit--;
+	// binaryTree.aff_node(it.get_node());
+	// binaryTree.aff_node(cit.get_node());
 
+
+	binaryTree.aff_node(binaryTree.ft_prev(binaryTree.ft_next(binaryTree.get_root())));
+	// binaryTree.aff_node(binaryTree.ft_prev(binaryTree.ft_prev(binaryTree.ft_next(binaryTree.get_root()))));
 
 
 
