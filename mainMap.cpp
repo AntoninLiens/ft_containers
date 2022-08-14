@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/12 16:08:29 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/14 14:48:43 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,35 +36,49 @@ int main(void) {
 
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
+	ft::RBTree<const int, char>::iterator	it = binaryTree.begin();
+	// ft::RBTree<const int, char>::const_iterator	cit = binaryTree.begin();
+	binaryTree.aff_node(it.get_node());
+	// binaryTree.aff_node(cit.get_node());
+	it--;
+	// cit++;
+	binaryTree.aff_node(it.get_node());
+	// binaryTree.aff_node(cit.get_node());
+	it++;
+	// cit--;
+	binaryTree.aff_node(it.get_node());
+	it--;
+	binaryTree.aff_node(it.get_node());
+	// binaryTree.aff_node(cit.get_node());
+
+	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+
 	binaryTree.deleteNode(binaryTree.get_root(), 20);
 	
 	binaryTree.aff_tree(binaryTree.get_root(), 0);
 
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+	
 	std::cout << "size, height :" << std::endl;
 	std::cout << std::endl << binaryTree.nodeCount(binaryTree.get_root()) << std::endl;
 	std::cout << binaryTree.height(binaryTree.get_root()) << std::endl;
 
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
-	ft::RBTree<const int, char>::iterator	it = binaryTree.begin();
+	ft::RBTree<const int, char>::iterator	it2 = binaryTree.begin();
 	// ft::RBTree<const int, char>::const_iterator	cit = binaryTree.begin();
-	// binaryTree.aff_node(it.get_node());
+	binaryTree.aff_node(it2.get_node());
 	// binaryTree.aff_node(cit.get_node());
-	// it--;
+	it2--;
 	// cit++;
-	// binaryTree.aff_node(it.get_node());
+	binaryTree.aff_node(it2.get_node());
 	// binaryTree.aff_node(cit.get_node());
-	// it++;
+	it2--;
 	// cit--;
-	// binaryTree.aff_node(it.get_node());
+	binaryTree.aff_node(it2.get_node());
+	it2++;
+	binaryTree.aff_node(it2.get_node());
 	// binaryTree.aff_node(cit.get_node());
-
-
-	binaryTree.aff_node(binaryTree.ft_prev(binaryTree.ft_next(binaryTree.get_root())));
-	// binaryTree.aff_node(binaryTree.ft_prev(binaryTree.ft_prev(binaryTree.ft_next(binaryTree.get_root()))));
-
-
 
 	return (0);
 }

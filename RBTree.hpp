@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/12 16:07:56 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/14 14:48:17 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -398,7 +398,7 @@ namespace ft {
 
 	/******************************************_UTILS_******************************************/
 
-		node_type	*ft_next(node_type *node) {
+		node_type	*next(node_type *node) {
 			node_type	*tmp;
 
 			// aff_node(node);
@@ -415,7 +415,7 @@ namespace ft {
 			return (tmp);
 		}
 
-		node_type	*ft_prev(node_type *node) {
+		node_type	*prev(node_type *node) {
 			node_type	*tmp;
 
 			// aff_node(node);
@@ -474,10 +474,11 @@ namespace ft {
 		node_type	*swapNode(node_type *to_replace, node_type *replace) {
 			if (to_replace->parent_ == NULL)
 				this->_root = replace;
-			else if (to_replace->parent_->left_ == to_replace)
-				to_replace->parent_->left_ = replace;
-			else
-				to_replace->parent_->right_ = replace;
+			to_replace->parent_->left_ == to_replace ? to_replace->parent_->left_ = replace : to_replace->parent_->right_ = replace;
+			if (to_replace->left_)
+				to_replace->left_->parent_ = replace;
+			if (to_replace->right_)
+				to_replace->right_->parent_ = replace;
 			replace->parent_ = to_replace->parent_;
 			replace->left_ = to_replace->left_;
 			replace->right_ = to_replace->right_;

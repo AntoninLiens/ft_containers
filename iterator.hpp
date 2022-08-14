@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/12 15:59:45 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/14 14:48:58 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -441,13 +441,7 @@ namespace ft {
 		map_iterator	operator++(int n) {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
-			std::cout << "**-----**" << std::endl;
-			this->aff_node(this->_node);
-			std::cout << "**-----**" << std::endl;
 			this->_node = this->next(this->_node);
-			std::cout << "**-----**" << std::endl;
-			this->aff_node(this->_node);
-			std::cout << "**-----**" << std::endl;
 			return (map_iterator(tmp, this->_leaf));
 		}
 
@@ -459,13 +453,7 @@ namespace ft {
 		map_iterator	operator--(int n) {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
-			std::cout << "**-----**" << std::endl;
-			this->aff_node(this->_node);
-			std::cout << "**-----**" << std::endl;
 			this->_node = this->prev(this->_node);
-			std::cout << "**-----**" << std::endl;
-			this->aff_node(this->_node);
-			std::cout << "**-----**" << std::endl;
 			return (map_iterator(tmp, this->_leaf));
 		}
 
@@ -497,7 +485,6 @@ namespace ft {
 		node_type	*prev(node_type *node) {
 			node_type	*tmp;
 
-			// aff_node(node);
 			if (node->left_ == this->_leaf) {
 				tmp = node;
 				while (tmp->parent_ != this->_leaf && tmp == tmp->parent_->left_)
