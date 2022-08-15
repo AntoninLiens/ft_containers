@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/15 13:52:24 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/15 16:54:51 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,10 @@ namespace ft {
 		typedef std::allocator<ft::Node<const Key,T> >				node_allocator_type;
 		typedef int													difference_type;
 		typedef size_t												size_type;
-		typedef ft::tree_iterator<node_type>							iterator;
-		typedef ft::tree_iterator<const node_type>					const_iterator;
+		typedef ft::tree_iterator<Node<const Key, T> >				iterator;
+		typedef ft::tree_iterator<Node<const Key, const T> >		const_iterator;
+		typedef ft::reverse_iterator<iterator>						reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>				const_reverse_iterator;
 		
 	/******************************************_CONSTRUCTORS_******************************************/
 
@@ -113,6 +115,22 @@ namespace ft {
 			return (const_iterator(this->_leaf, this->_leaf));
 		}
 
+		reverse_iterator	rbegin(void) {
+			return (reverse_iterator(this->end()));
+		}
+
+		const_reverse_iterator	rbegin(void) const {
+			return (const_reverse_iterator(this->end()));
+		}
+
+		reverse_iterator	rend(void) {
+			return (reverse_iterator(this->begin()));
+		}
+
+		const_reverse_iterator	rend(void) const {
+			return (const_reverse_iterator(this->begin()));
+		}
+
 	/******************************************_MODIFIERS_******************************************/
 
 		node_type	*insertNode(node_type *node, value_type data) {
@@ -134,6 +152,10 @@ namespace ft {
 					if (node->color_ && node->right_->color_)
 						this->_f = true;
 				}
+			}
+			else {
+				std::cout << "coucou" << std::endl;
+				return (node);
 			}
 			return (node = this->balanceInsertRB(node));
 		}
@@ -264,7 +286,7 @@ namespace ft {
 					if (node->parent_->right_ == this->_leaf || node->parent_->right_->color_ == false) {
 						if (node->left_ != this->_leaf && node->left_->color_ == true)
 							this->_rr = true;
-						else if (node->right_ != this->_leaf & node->right_->color_ == true)
+						else if (node->right_ != this->_leaf && node->right_->color_ == true)
 							this->_lr = true;
 					}
 					else {
@@ -457,7 +479,6 @@ namespace ft {
 		}
 
 		node_type	*maxValNode(node_type *node) {
-			this->aff_node(node);
 			if (node != this->_leaf && node->right_ != this->_leaf)
 				this->maxValNode(node->right_);
 			return (node->right_);
@@ -490,8 +511,8 @@ namespace ft {
 		}
 
 	private:
-		node_type				*_root;
-		node_type				*_leaf;
+		node_type			*_root;
+		node_type			*_leaf;
 		key_compare			_cmp;
 		bool				_ll;
 		bool				_rl;

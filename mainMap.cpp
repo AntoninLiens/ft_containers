@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/15 14:24:32 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/15 16:57:23 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ int main(void) {
 	ft::RBTree<const int, char>::iterator	itbis = binaryTree.begin();
 	// ft::RBTree<const int, char>::const_iterator	cit = binaryTree.begin();
 	binaryTree.aff_node(it.get_node());
-	binaryTree.aff_node(itbis.get_node());
+	if (it != itbis)
+		binaryTree.aff_node(itbis.get_node());
 	// binaryTree.aff_node(cit.get_node());
 	it--;
 	// cit++;

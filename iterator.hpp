@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/15 14:23:51 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/15 15:57:59 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -381,17 +381,17 @@ namespace ft {
 												TREE_ITERATOR
 	**************************************************************************************************/
 
-	template<class Node, class Pointer = Node *, class Reference = Node &>
+	template<class Node>
 	class tree_iterator {
 	public:
 		typedef	Node		node_type;
-		typedef Pointer		pointer;
-		typedef	Reference	reference;
+		typedef Node *		pointer;
+		typedef	Node &		reference;
 		typedef ptrdiff_t	difference_type;
 
 	/******************************************_CONST_OPERATOR_******************************************/
 
-		operator tree_iterator<const pointer>(void) const {
+		operator tree_iterator<const Node>(void) const {
 			return (this->_node);
 		}
 
@@ -496,18 +496,6 @@ namespace ft {
 			while (tmp->right_ != this->_leaf)
 				tmp = tmp->right_;
 			return (tmp);
-		}
-
-		pointer	maxValNode(pointer node) {
-			if (node && node->right_ != this->_leaf)
-				this->maxValNode(node->right_);
-			return (node);
-		}
-
-		pointer	minValNode(pointer node) {
-			if (node && node->left_ != this->_leaf)
-				this->minValNode(node->left_);
-			return (node);
 		}
 
 	private:
