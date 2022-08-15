@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/14 14:48:43 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/15 14:24:32 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,10 @@ int main(void) {
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
 	ft::RBTree<const int, char>::iterator	it = binaryTree.begin();
+	ft::RBTree<const int, char>::iterator	itbis = binaryTree.begin();
 	// ft::RBTree<const int, char>::const_iterator	cit = binaryTree.begin();
 	binaryTree.aff_node(it.get_node());
+	binaryTree.aff_node(itbis.get_node());
 	// binaryTree.aff_node(cit.get_node());
 	it--;
 	// cit++;
@@ -69,7 +71,7 @@ int main(void) {
 	// ft::RBTree<const int, char>::const_iterator	cit = binaryTree.begin();
 	binaryTree.aff_node(it2.get_node());
 	// binaryTree.aff_node(cit.get_node());
-	it2--;
+	it2++;
 	// cit++;
 	binaryTree.aff_node(it2.get_node());
 	// binaryTree.aff_node(cit.get_node());

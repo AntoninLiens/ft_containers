@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/14 14:48:58 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/15 14:23:51 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -378,38 +378,39 @@ namespace ft {
 	}
 
 	/*************************************************************************************************
-												MAP_ITERATOR
+												TREE_ITERATOR
 	**************************************************************************************************/
 
 	template<class Node, class Pointer = Node *, class Reference = Node &>
-	class map_iterator {
+	class tree_iterator {
 	public:
 		typedef	Node		node_type;
 		typedef Pointer		pointer;
 		typedef	Reference	reference;
+		typedef ptrdiff_t	difference_type;
 
 	/******************************************_CONST_OPERATOR_******************************************/
 
-		operator map_iterator<const pointer>(void) const {
+		operator tree_iterator<const pointer>(void) const {
 			return (this->_node);
 		}
 
 	/******************************************_CONSTRUCTORS_******************************************/
 
-		map_iterator(void) {
+		tree_iterator(void) {
 			this->_node = NULL;
 			this->_node->left_ = NULL;
 			this->_node->right_ = NULL;
 			this->_node->parent_ = NULL;
 		}
 
-		map_iterator(pointer node, pointer leaf) : _node(node), _leaf(leaf) {}
+		tree_iterator(pointer node, pointer leaf) : _node(node), _leaf(leaf) {}
 
-		map_iterator(const map_iterator<node_type>& it) : _node(it.get_node()), _leaf(it.get_leaf()) {}
+		tree_iterator(const tree_iterator<node_type>& it) : _node(it.get_node()), _leaf(it.get_leaf()) {}
 
 	/******************************************_DESTRUCTOR_******************************************/
 
-		~map_iterator(void) {}
+		~tree_iterator(void) {}
 
 	/******************************************_GET_NODE_******************************************/
 
@@ -424,37 +425,37 @@ namespace ft {
 	/******************************************_DEREFERENCED_OPERATORS_******************************************/
 	
 		reference	operator*(void) const {
-			return (*this->_node);
+			return (&this->_node->data_);
 		}
 
 		pointer	operator->(void) const {
-			return (this->_node);
+			return (this->_node->data_);
 		}
 
 	/******************************************_INCREMENT/DECREMENT_OPERATORS_******************************************/
 
-		map_iterator&	operator++(void) {
+		tree_iterator&	operator++(void) {
 			this->_node = this->next(this->_node);
 			return (*this);
 		}
 
-		map_iterator	operator++(int n) {
+		tree_iterator	operator++(int n) {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
 			this->_node = this->next(this->_node);
-			return (map_iterator(tmp, this->_leaf));
+			return (tree_iterator(tmp, this->_leaf));
 		}
 
-		map_iterator&	operator--(void) {
+		tree_iterator&	operator--(void) {
 			this->_node = this->prev(this->_node);
 			return (*this);
 		}
 
-		map_iterator	operator--(int n) {
+		tree_iterator	operator--(int n) {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
 			this->_node = this->prev(this->_node);
-			return (map_iterator(tmp, this->_leaf));
+			return (tree_iterator(tmp, this->_leaf));
 		}
 
 		/******************************************_UTILS_******************************************/
@@ -468,7 +469,6 @@ namespace ft {
 		node_type	*next(node_type *node) {
 			node_type	*tmp;
 
-			// aff_node(node);
 			if (node->right_ == this->_leaf) {
 				tmp = node;
 				while (tmp->parent_ != this->_leaf && tmp == tmp->parent_->right_)
@@ -515,6 +515,18 @@ namespace ft {
 		pointer	_leaf;
 
 	};
+
+	/******************************************_NON_MEMBER_FUNCTIONS_OVERLOAD_******************************************/
+
+	template<class Node>
+	bool operator==(const tree_iterator<Node>& lhs, const tree_iterator<Node>& rhs) {
+		return (lhs.get_node() == rhs.get_node());
+	}
+
+	template<class Node>
+	bool operator!=(const tree_iterator<Node>& lhs, const tree_iterator<Node>& rhs) {
+		return (lhs.get_node() != rhs.get_node());
+	}
 
 }
 

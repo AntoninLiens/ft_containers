@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/14 14:48:17 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/15 13:52:24 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ namespace ft {
 		typedef std::allocator<ft::Node<const Key,T> >				node_allocator_type;
 		typedef int													difference_type;
 		typedef size_t												size_type;
-		typedef ft::map_iterator<node_type>							iterator;
-		typedef ft::map_iterator<const node_type>					const_iterator;
+		typedef ft::tree_iterator<node_type>							iterator;
+		typedef ft::tree_iterator<const node_type>					const_iterator;
 		
 	/******************************************_CONSTRUCTORS_******************************************/
 
@@ -401,7 +401,6 @@ namespace ft {
 		node_type	*next(node_type *node) {
 			node_type	*tmp;
 
-			// aff_node(node);
 			if (node->right_ == this->_leaf) {
 				tmp = node;
 				while (tmp->parent_ != this->_leaf && tmp == tmp->parent_->right_)
@@ -418,7 +417,6 @@ namespace ft {
 		node_type	*prev(node_type *node) {
 			node_type	*tmp;
 
-			// aff_node(node);
 			if (node->left_ == this->_leaf) {
 				tmp = node;
 				while (tmp->parent_ != this->_leaf && tmp == tmp->parent_->left_)
@@ -431,34 +429,6 @@ namespace ft {
 				tmp = tmp->right_;
 			return (tmp);
 		}
-
-		// node_type	*next(node_type *node) const {
-		// 	if (node->right_ == this->_leaf) {
-		// 		while (node && node == node->parent_->right_)
-		// 			node = node->parent_;
-		// 		node = node->parent_;
-		// 	}
-		// 	else {
-		// 		node = node->right_;
-		// 		while (node->left_ != this->_leaf)
-		// 			node = node->left_;
-		// 	}
-		// 	return (node);
-		// }
-
-		// node_type	*prev(node_type *node) const {
-		// 	if (node->left_ == this->_leaf) {
-		// 		while (node && node == node->parent_->right_)
-		// 			node = node->parent_;
-		// 		node = node->parent_;
-		// 	}
-		// 	else {
-		// 		node = node->left_;
-		// 		while (node->right_ != this->_leaf)
-		// 			node = node->right_;
-		// 	}
-		// 	return (node);
-		// }
 
 		node_type	*newNode(value_type data, bool color, bool temp) {
 			node_type	*tmp = this->_node_alloc.allocate(1);
