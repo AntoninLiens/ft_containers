@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/15 16:08:05 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/16 18:13:30 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,9 +122,19 @@ namespace ft {
 
 	/******************************************_MODIFIERS_******************************************/
 
-		pair<iterator,bool>	insert(const value_type& val);
+		pair<iterator,bool>	insert(const value_type& val) {
+			iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), val));
+			bool	b2o = inserted.get_node()->temp_ ? true : false;
+			inserted.get_node()->temp_ = false;
+			return (ft::make_pair(inserted, b2o));
+		}
 		
-		iterator	insert(iterator position, const value_type& val);
+		iterator	insert(iterator position, const value_type& val) {
+			iterator	inserted(this->_tree.insertNode(position.get_node(), val));
+			if (inserted.get_node()->temp_)
+				inserted.get_node()->temp_ = false;
+			return (inserted);
+		}
 		
 		template <class InputIterator>
 		void	insert(InputIterator first, InputIterator last);
