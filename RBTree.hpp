@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/17 13:11:04 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/17 15:31:19 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ namespace ft {
 		typedef std::allocator<ft::Node<const Key,T> >				node_allocator_type;
 		typedef int													difference_type;
 		typedef size_t												size_type;
-		typedef ft::tree_iterator<Key, T>							iterator;
-		typedef ft::tree_iterator<Key, const T> >					const_iterator;
+		typedef ft::tree_iterator<value_type, node_type>			iterator;
+		typedef ft::tree_iterator<const value_type, node_type>		const_iterator;
 		typedef ft::reverse_iterator<iterator>						reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator>				const_reverse_iterator;
 		
@@ -468,7 +468,7 @@ namespace ft {
 			}
 		}
 
-		size_type nodeCount(node_type *node) {
+		size_type nodeCount(node_type *node) const {
 		    if (node == this->_leaf)
 		        return (0);
 		    else

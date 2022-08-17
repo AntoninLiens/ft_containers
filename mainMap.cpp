@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/17 12:50:43 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/17 15:37:13 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,11 @@ int main(void) {
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
 	ft::RBTree<const int, char>::iterator	it = binaryTree.begin();
-	ft::RBTree<const int, char>::iterator	itbis = binaryTree.begin();
+	// ft::RBTree<const int, char>::iterator	itbis = binaryTree.begin();
 	// ft::RBTree<const int, char>::const_iterator	cit = binaryTree.begin();
-	binaryTree.aff_node(it.get_node());
-	if (it != itbis)
-		binaryTree.aff_node(itbis.get_node());
-	std::cout << it->second; << std::endl;
+	// binaryTree.aff_node(it.get_node());
+	// if (it != itbis)
+	// 	binaryTree.aff_node(itbis.get_node());
 	// binaryTree.aff_node(cit.get_node());
 	it--;
 	// cit++;
@@ -58,6 +57,7 @@ int main(void) {
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
 	binaryTree.deleteNode(binaryTree.get_root(), 20);
+	binaryTree.deleteNode(binaryTree.get_root(), 35);
 	
 	binaryTree.aff_tree(binaryTree.get_root(), 0);
 
