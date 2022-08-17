@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/16 19:12:40 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/17 13:11:04 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,11 @@
 # define RBTREE_HPP
 
 #include "iterator.hpp"
-#include "pair.hpp"
+#include "Node.h"
 #include <memory>
 #include <iostream>
 
 namespace ft {
-
-	/*************************************************************************************************
-											RED_BLACK_TREE_NODE
-	**************************************************************************************************/
-
-	template <class Key, class T>
-	struct Node {
-		ft::pair<const Key, T>	data_;
-		Node					*left_;
-		Node					*right_;
-		Node					*parent_;
-		bool					color_;
-		bool					temp_;
-
-	};
 
 	/*************************************************************************************************
 												RED_BLACK_TREE
@@ -44,15 +29,15 @@ namespace ft {
 	public:
 		typedef Key													key_type;
 		typedef T													mapped_type;
-		typedef ft::Node<const Key, T>								node_type;
+		typedef ft::Node<Key, T>									node_type;
 		typedef ft::pair<const Key, T>								value_type;
 		typedef Compare												key_compare;
 		typedef std::allocator<ft::pair<const Key,T> >				allocator_type;
 		typedef std::allocator<ft::Node<const Key,T> >				node_allocator_type;
 		typedef int													difference_type;
 		typedef size_t												size_type;
-		typedef ft::tree_iterator<Node<const Key, T> >				iterator;
-		typedef ft::tree_iterator<Node<const Key, const T> >		const_iterator;
+		typedef ft::tree_iterator<Key, T>							iterator;
+		typedef ft::tree_iterator<Key, const T> >					const_iterator;
 		typedef ft::reverse_iterator<iterator>						reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator>				const_reverse_iterator;
 		

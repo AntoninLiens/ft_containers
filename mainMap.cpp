@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/16 19:12:06 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/17 12:50:43 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ int main(void) {
 	binaryTree.aff_node(it.get_node());
 	if (it != itbis)
 		binaryTree.aff_node(itbis.get_node());
+	std::cout << it->second; << std::endl;
 	// binaryTree.aff_node(cit.get_node());
 	it--;
 	// cit++;
