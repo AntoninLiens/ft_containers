@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/17 15:02:58 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/18 18:32:18 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,27 +25,27 @@ namespace ft {
 	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
 	class map {
 	public:
-		typedef	ft::Node<Key, T>							node_type;
-		typedef Key											key_type;
-		typedef T											mapped_type;
-		typedef	ft::pair<const key_type, mapped_type>		value_type;
-		typedef Compare										key_compare;
-		typedef Alloc										allocator_type;
-		typedef typename allocator_type::reference			reference;
-		typedef typename allocator_type::const_reference	const_reference;
-		typedef typename allocator_type::pointer			pointer;
-		typedef typename allocator_type::const_pointer		const_pointer;
-		typedef ft::tree_iterator<Key, T>					iterator;
-		typedef ft::tree_iterator<Key, const T>				const_iterator;
-		typedef	ft::reverse_iterator<iterator>				reverse_iterator;
-		typedef	ft::reverse_iterator<const_iterator>		const_reverse_iterator;
-		typedef ptrdiff_t									difference_type;
-		typedef size_t										size_type;
+		typedef	ft::Node<Key, T>										node_type;
+		typedef Key														key_type;
+		typedef T														mapped_type;
+		typedef	ft::pair<const key_type, mapped_type>					value_type;
+		typedef Compare													key_compare;
+		typedef Alloc													allocator_type;
+		typedef typename allocator_type::reference						reference;
+		typedef typename allocator_type::const_reference				const_reference;
+		typedef typename allocator_type::pointer						pointer;
+		typedef typename allocator_type::const_pointer					const_pointer;
+		typedef ft::map_iterator<value_type, ft::Node<Key, T> >			iterator;
+		typedef ft::map_iterator<const value_type, ft::Node<Key, T> >	const_iterator;
+		typedef	ft::reverse_iterator<iterator>							reverse_iterator;
+		typedef	ft::reverse_iterator<const_iterator>					const_reverse_iterator;
+		typedef ptrdiff_t												difference_type;
+		typedef size_t													size_type;
 
 	/******************************************_CONSTRUCTORS_******************************************/
 
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-		: _alloc(alloc), _cmp(comp), _tree(this->_tree()) {}
+		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()) {}
 
 		template <class InputIterator>
   		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
@@ -54,7 +54,7 @@ namespace ft {
 
 	/******************************************_DESTRUCTOR_******************************************/
 
-		~map(void);
+		~map(void) {}
 
 	/******************************************_ASSIGN_OPERATOR_******************************************/
 
@@ -66,38 +66,46 @@ namespace ft {
 			return (this->_alloc);
 		}
 
+		ft::RBTree<Key, T>	get_tree() const {
+			return (this->_tree);
+		}
+
+		void	aff_tree(void) const {
+			this->_tree.aff_tree(this->_tree.get_root(), 0);
+		}
+
 	/******************************************_ITERATORS_******************************************/
 
 	    iterator	begin(void) {
-			return (this->_tree.begin());
+			return (iterator(this->_tree.get_root(), this->_tree.get_leaf()));
 		}
 		
 		const_iterator	begin(void) const {
-			return (this->_tree.begin());
+			return (const_iterator(this->_tree.get_root(), this->_tree.get_leaf()));
 		}
 		
 		iterator	end(void) {
-			return (this->_tree.end());
+			return (iterator(this->_tree.maxValNode(this->_tree.get_root()), this->_tree.get_leaf()));
 		}
 
 		const_iterator	end(void) const {
-			return (this->_tree.end());
+			return (const_iterator(this->_tree.maxValNode(this->_tree.get_root()), this->_tree.get_leaf()));
 		}
 
 		reverse_iterator	rbegin(void) {
-			return (this->_tree.rbegin());
+			return (reverse_iterator(this->begin()));
 		}
 		
 		const_reverse_iterator	rbegin(void) const {
-			return (this->_tree.rbegin());
+			return (const_reverse_iterator(this->begin()));
 		}
 
       	reverse_iterator	rend(void) {
-			  return (this->_tree.rend());
+			  return (reverse_iterator(this->end()));
 		}
 		
 		const_reverse_iterator	rend(void) const {
-			return (this->_tree.rend());
+			return (const_reverse_iterator(this->end()));
 		}
 
 	/******************************************_CAPACITY_******************************************/
@@ -137,7 +145,10 @@ namespace ft {
 		}
 		
 		template <class InputIterator>
-		void	insert(InputIterator first, InputIterator last);
+		void	insert(InputIterator first, InputIterator last) {
+			for (; first != last; first++)
+				this->_tree.insertNode(this->_tree.get_root(), *first);
+		}
 
 	    void	erase(iterator position) {
 			this->_tree.deleteNode(this->_tree.get_root(), position.get_node().first);
@@ -155,7 +166,9 @@ namespace ft {
 
 		void	swap(map& x);
 
-		void	clear();
+		void	clear(void) {
+			this->_tree.set_root(this->_tree.destroyRBTree(this->_tree.get_root()));
+		}
 
 	/******************************************_OBSERVERS_******************************************/
 
@@ -171,9 +184,9 @@ namespace ft {
 			return (iterator(this->_tree.findNode(this->_tree.get_root(), k), this->_tree.get_leaf()));
 		}
 		
-		// const_iterator	find(const key_type& k) const {
-		// 	return (const_iterator(this->_tree.findNode(this->_tree.get_root(), k)));
-		// }
+		const_iterator	find(const key_type& k) const {
+			return (const_iterator(this->_tree.findNode(this->_tree.get_root(), k), this->_tree.get_leaf()));
+		}
 
 		size_type	count(const key_type& k) const {
 			if (this->_tree.findNode(this->_tree.get_root(), k) == this->_tree.get_leaf())
@@ -186,20 +199,20 @@ namespace ft {
 			return (iterator(this->_tree.minValNode(node), this->_tree.get_leaf()));
 		}
 		
-		// const_iterator	lower_bound(const key_type& k) const {
-		// 	node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
-		// 	return (const_iterator(this->_tree.minValNode(node)));
-		// }
+		const_iterator	lower_bound(const key_type& k) const {
+			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
+			return (const_iterator(this->_tree.minValNode(node), this->_tree.get_leaf()));
+		}
 
 	    iterator	upper_bound(const key_type& k) {
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
 			return (iterator(this->_tree.maxValNode(node), this->_tree.get_leaf()));
 		}
 		
-		// const_iterator	upper_bound(const key_type& k) const {
-		// 	node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
-		// 	return (const_iterator(this->_tree.maxValNode(node)));
-		// }
+		const_iterator	upper_bound(const key_type& k) const {
+			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
+			return (const_iterator(this->_tree.maxValNode(node), this->_tree.get_leaf()));
+		}
 
 		pair<const_iterator,const_iterator>	equal_range(const key_type& k) const;
 		

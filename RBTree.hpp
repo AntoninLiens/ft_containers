@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/17 16:08:27 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/18 18:35:49 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,6 @@ namespace ft {
 		typedef std::allocator<ft::Node<const Key,T> >				node_allocator_type;
 		typedef int													difference_type;
 		typedef size_t												size_type;
-		typedef ft::tree_iterator<value_type, node_type>			iterator;
-		typedef ft::tree_iterator<const value_type, node_type>		const_iterator;
-		typedef ft::reverse_iterator<iterator>						reverse_iterator;
-		typedef ft::reverse_iterator<const_iterator>				const_reverse_iterator;
 		
 	/******************************************_CONSTRUCTORS_******************************************/
 
@@ -54,11 +50,15 @@ namespace ft {
 		}
 
 		RBTree(const RBTree& tree)
-		: _cmp(tree.get_compare()), _alloc(tree.get_allocator()), _node_alloc(tree.get_node_alloc()) {}
+		: _cmp(tree.get_compare()), _alloc(tree.get_allocator()), _node_alloc(tree.get_node_alloc()), _root(tree.get_root()) {}
 
 	/******************************************_DESTRUCTOR_******************************************/
 
-		~RBTree(void) {}
+		~RBTree(void) {
+			this->destroyRBTree(this->_root);
+			this->_alloc.destroy(&this->_leaf->data_);
+			this->_node_alloc.deallocate(this->_leaf, 1);
+		}
 
 	/******************************************_GETTERS_******************************************/
 
@@ -81,39 +81,11 @@ namespace ft {
 		node_allocator_type	get_node_alloc(void) const {
 			return (this->_node_alloc);
 		}
+		
+	/******************************************_SETTERS_******************************************/
 
-	/******************************************_ITERATORS_******************************************/
-
-		iterator	begin(void) {
-			return (iterator(this->_root, this->_leaf));
-		}
-
-		const_iterator	begin(void) const {
-			return (const_iterator(this->_root, this->_leaf));
-		}
-
-		iterator	end(void) {
-			return (iterator(this->_leaf, this->_leaf));
-		}
-
-		const_iterator	end(void) const {
-			return (const_iterator(this->_leaf, this->_leaf));
-		}
-
-		reverse_iterator	rbegin(void) {
-			return (reverse_iterator(this->end()));
-		}
-
-		const_reverse_iterator	rbegin(void) const {
-			return (const_reverse_iterator(this->end()));
-		}
-
-		reverse_iterator	rend(void) {
-			return (reverse_iterator(this->begin()));
-		}
-
-		const_reverse_iterator	rend(void) const {
-			return (const_reverse_iterator(this->begin()));
+		void	set_root(node_type *node) {
+			this->_root = node;
 		}
 
 	/******************************************_MODIFIERS_******************************************/
@@ -168,18 +140,18 @@ namespace ft {
 						tmp->right_->parent_ = tmp->parent_;
 						tmp->parent_->left_ == tmp ? tmp->parent_->left_ = tmp->right_ : tmp->parent_->right_ = tmp->right_;
 					}
-					node = this->swapNode(node, tmp);
+					node = this->replaceNode(node, tmp);
 				}
 				else {
 					if (tmp->color_) {
 						tmp->parent_->left_ == tmp ? tmp->parent_->left_ = this->_leaf : tmp->parent_->right_ = this->_leaf;
-						node = this->swapNode(node, tmp);
+						node = this->replaceNode(node, tmp);
 					}
 					else {
 						node_type	*db_node = newNode(value_type(), false, true);
 						db_node->parent_ = tmp->parent_;
 						tmp->parent_->left_ == tmp ? tmp->parent_->left_ = db_node : tmp->parent_->right_ = db_node;
-						node = this->swapNode(node, tmp);
+						node = this->replaceNode(node, tmp);
 						this->balanceDelRB(db_node);
 					}
 				}
@@ -246,7 +218,8 @@ namespace ft {
 				uncle->color_ = false;
 				if (node->parent_->parent_ != this->_root)
 					node->parent_->parent_->color_ = true;
-				return (balanceInsertRB(node->parent_->parent_));
+				if (node->parent_->parent_ != this->_root)
+					return (balanceInsertRB(node->parent_->parent_));
 			}
 			else {
 				node_type	*parent = node->parent_;
@@ -370,7 +343,12 @@ namespace ft {
 
 		void	aff_tree(node_type *node, int space) const {
 			int i;
-        	if(node != this->_leaf) {
+			if (this->_root == this->_leaf) {
+				std::cout << std::endl;
+				this->aff_node(this->_leaf);
+				std::cout << std::endl;
+			}
+        	if (node != this->_leaf) {
         	    space = space + 10;
         	    this->aff_tree(node->right_, space);
         	    std::cout << std::endl;
@@ -382,7 +360,44 @@ namespace ft {
         	}
 		}
 
-	/******************************************_UTILS_******************************************/
+	/******************************************_NODE_OPERATIONS_******************************************/
+
+		node_type	*newNode(value_type data, bool color, bool temp) {
+			node_type	*tmp = this->_node_alloc.allocate(1);
+			this->_alloc.construct(&tmp->data_, data);
+			tmp->left_ = this->_leaf;
+			tmp->right_ = this->_leaf;
+			tmp->parent_ = NULL;
+			tmp->color_ = color;
+			tmp->temp_ = temp;
+			return (tmp);
+		}
+
+		node_type	*destroyRBTree(node_type *node) {
+			if (node != this->_leaf) {
+				this->destroyRBTree(node->left_);
+				this->destroyRBTree(node->right_);
+				this->_alloc.destroy(&node->data_);
+				this->_node_alloc.deallocate(node, 1);
+			}
+			return (this->_leaf);
+		}
+		
+		node_type	*replaceNode(node_type *to_replace, node_type *replace) {
+			if (to_replace->parent_ == NULL)
+				this->_root = replace;
+			if (replace != this->_root)
+				to_replace->parent_->left_ == to_replace ? to_replace->parent_->left_ = replace : to_replace->parent_->right_ = replace;
+			if (to_replace->left_)
+				to_replace->left_->parent_ = replace;
+			if (to_replace->right_)
+				to_replace->right_->parent_ = replace;
+			replace->parent_ = to_replace->parent_;
+			replace->left_ = to_replace->left_;
+			replace->right_ = to_replace->right_;
+			replace->color_ = to_replace->color_;
+			return (replace);
+		}
 
 		node_type	*next(node_type *node) {
 			node_type	*tmp;
@@ -415,34 +430,6 @@ namespace ft {
 				tmp = tmp->right_;
 			return (tmp);
 		}
-
-		node_type	*newNode(value_type data, bool color, bool temp) {
-			node_type	*tmp = this->_node_alloc.allocate(1);
-			this->_alloc.construct(&tmp->data_, data);
-			tmp->left_ = this->_leaf;
-			tmp->right_ = this->_leaf;
-			tmp->parent_ = NULL;
-			tmp->color_ = color;
-			tmp->temp_ = temp;
-			return (tmp);
-		}
-
-		node_type	*swapNode(node_type *to_replace, node_type *replace) {
-			if (to_replace->parent_ == NULL)
-				this->_root = replace;
-			if (replace != this->_root)
-				to_replace->parent_->left_ == to_replace ? to_replace->parent_->left_ = replace : to_replace->parent_->right_ = replace;
-			if (to_replace->left_)
-				to_replace->left_->parent_ = replace;
-			if (to_replace->right_)
-				to_replace->right_->parent_ = replace;
-			replace->parent_ = to_replace->parent_;
-			replace->left_ = to_replace->left_;
-			replace->right_ = to_replace->right_;
-			replace->color_ = to_replace->color_;
-			return (replace);
-		}
-
 		node_type	*maxValNode(node_type *node) {
 			if (node != this->_leaf && node->right_ != this->_leaf)
 				node = this->maxValNode(node->right_);
@@ -454,6 +441,8 @@ namespace ft {
 				node = this->minValNode(node->left_);
 			return (node);
 		}
+
+	/******************************************_SIZE_******************************************/
 
 		size_type	height(node_type *node) {
 			if (node == this->_leaf)

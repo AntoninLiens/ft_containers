@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/17 16:05:08 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/18 15:35:34 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -383,7 +383,7 @@ namespace ft {
 	**************************************************************************************************/
 
 	template<class T, class Node>
-	class tree_iterator {
+	class map_iterator {
 	public:
 		typedef	Node		node_type;
 		typedef node_type *	pointer;
@@ -393,30 +393,25 @@ namespace ft {
 
 	/******************************************_CONST_OPERATOR_******************************************/
 
-		operator tree_iterator<const T, Node>() const {
+		operator map_iterator<const T, Node>() const {
 			return (this->_node);
 		}
 
 	/******************************************_CONSTRUCTORS_******************************************/
 
-		tree_iterator(void) {
-			this->_node = NULL;
-			this->_node->left_ = NULL;
-			this->_node->right_ = NULL;
-			this->_node->parent_ = NULL;
-		}
+		map_iterator(void) : _node(NULL), _leaf(NULL) {}
 
-		tree_iterator(pointer node, pointer leaf) : _node(node), _leaf(leaf) {}
+		map_iterator(pointer node, pointer leaf) : _node(node), _leaf(leaf) {}
 
-		tree_iterator(const tree_iterator<T, Node>& it) : _node(it.get_node()), _leaf(it.get_leaf()) {}
+		map_iterator(const map_iterator<T, Node>& it) : _node(it.get_node()), _leaf(it.get_leaf()) {}
 
 	/******************************************_DESTRUCTOR_******************************************/
 
-		~tree_iterator(void) {}
+		~map_iterator(void) {}
 
 	/******************************************_ASSIGN_OPERATOR_******************************************/
 
-		tree_iterator&	operator=(const tree_iterator& it) {
+		map_iterator&	operator=(const map_iterator& it) {
 			if (it.get_node() != this->_node)
 				this->_node = it.get_node();
 			return (*this);
@@ -444,28 +439,28 @@ namespace ft {
 
 	/******************************************_INCREMENT/DECREMENT_OPERATORS_******************************************/
 
-		tree_iterator&	operator++(void) {
+		map_iterator&	operator++(void) {
 			this->_node = this->next(this->_node);
 			return (*this);
 		}
 
-		tree_iterator	operator++(int n) {
+		map_iterator	operator++(int n) {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
 			this->_node = this->next(this->_node);
-			return (tree_iterator(tmp, this->_leaf));
+			return (map_iterator(tmp, this->_leaf));
 		}
 
-		tree_iterator&	operator--(void) {
+		map_iterator&	operator--(void) {
 			this->_node = this->prev(this->_node);
 			return (*this);
 		}
 
-		tree_iterator	operator--(int n) {
+		map_iterator	operator--(int n) {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
 			this->_node = this->prev(this->_node);
-			return (tree_iterator(tmp, this->_leaf));
+			return (map_iterator(tmp, this->_leaf));
 		}
 
 		/******************************************_UTILS_******************************************/
@@ -517,12 +512,12 @@ namespace ft {
 	/******************************************_NON_MEMBER_FUNCTIONS_OVERLOAD_******************************************/
 
 	// template<class Key, class T>
-	// bool operator==(const tree_iterator<Key, T>& lhs, const tree_iterator<Key, T>& rhs) {
+	// bool operator==(const map_iterator<Key, T>& lhs, const map_iterator<Key, T>& rhs) {
 	// 	return (lhs.get_node() == rhs.get_node());
 	// }
 
 	// template<class Key, class T>
-	// bool operator!=(const tree_iterator<Key, T>& lhs, const tree_iterator<Key, T>& rhs) {
+	// bool operator!=(const map_iterator<Key, T>& lhs, const map_iterator<Key, T>& rhs) {
 	// 	return (lhs.get_node() != rhs.get_node());
 	// }
 
