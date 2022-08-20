@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/18 18:23:02 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/20 20:10:34 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,21 @@
 int main(void) {
 	ft::map<const int, char>	map;
 
-	map.insert(ft::make_pair(50, 65));
-	map.insert(ft::make_pair(55, 65));
-	map.insert(ft::make_pair(35, 65));
-	map.insert(ft::make_pair(40, 65));
-	map.insert(ft::make_pair(20, 65));
-	map.insert(ft::make_pair(10, 65));
 	map.insert(ft::make_pair(5, 65));
-	map.insert(ft::make_pair(25, 65));
-	map.insert(ft::make_pair(17, 65));
+	map.insert(ft::make_pair(6, 65));
+	map.insert(ft::make_pair(7, 65));
+	map.insert(ft::make_pair(8, 65));
+	map.insert(ft::make_pair(18, 65));
+	map.insert(ft::make_pair(1, 65));
+	map.insert(ft::make_pair(-4, 65));
+	map.insert(ft::make_pair(1000, 65));
+	map.insert(ft::make_pair(2, 65));
+	map.insert(ft::make_pair(84, 65));
+	map.insert(ft::make_pair(69, 65));
+	map.insert(ft::make_pair(420, 65));
+	map.insert(ft::make_pair(42, 65));
+	map.insert(ft::make_pair(19, 65));
+	map.insert(ft::make_pair(101, 65));
 
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 	
@@ -34,17 +40,22 @@ int main(void) {
 
 	ft::map<const int, char>::iterator	it = map.begin();
 	ft::map<const int, char>::iterator	it2 = map.end();
-	it++;
-	std::cout << it->first << " || " << it->second << std::endl;
-	std::cout << (++it)->first << std::endl;
-	std::cout << it2->first << " || " << it2->second << std::endl;
+	for (;it != it2; it++)
+		std::cout << it->first << " | " << it->second << std::endl;
 
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
-	map.clear();
+	map.erase(6);
+	map.erase(5);
+	map.erase(84);
+	map.erase(19);
+	map.erase(101);
+	map.erase(1000);
+	map.erase(420);
 
 	map.aff_tree();
 
+	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 	// ft::RBTree<const int, char>	binaryTree;
 
 	// binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(50, 65));

@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/18 15:35:34 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/20 16:59:49 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -511,15 +511,15 @@ namespace ft {
 
 	/******************************************_NON_MEMBER_FUNCTIONS_OVERLOAD_******************************************/
 
-	// template<class Key, class T>
-	// bool operator==(const map_iterator<Key, T>& lhs, const map_iterator<Key, T>& rhs) {
-	// 	return (lhs.get_node() == rhs.get_node());
-	// }
+	template<class Key1, class T1, class Key2, class T2>
+	bool operator==(const map_iterator<Key1, T1>& lhs, const map_iterator<Key2, T2>& rhs) {
+		return (lhs.get_node() == rhs.get_node());
+	}
 
-	// template<class Key, class T>
-	// bool operator!=(const map_iterator<Key, T>& lhs, const map_iterator<Key, T>& rhs) {
-	// 	return (lhs.get_node() != rhs.get_node());
-	// }
+	template<class Key1, class T1, class Key2, class T2>
+	bool operator!=(const map_iterator<Key1, T1>& lhs, const map_iterator<Key2, T2>& rhs) {
+		return (lhs.get_node() != rhs.get_node());
+	}
 
 }
 

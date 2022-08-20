@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/18 18:35:49 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/20 20:17:06 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ namespace ft {
 		typedef std::allocator<ft::Node<const Key,T> >				node_allocator_type;
 		typedef int													difference_type;
 		typedef size_t												size_type;
-		
+
 	/******************************************_CONSTRUCTORS_******************************************/
 
 		RBTree(const key_compare& cmp = key_compare(), const allocator_type& alloc = allocator_type(), const node_allocator_type& node_alloc = node_allocator_type())
@@ -117,6 +117,7 @@ namespace ft {
 				return (node);
 			if (node->left_ == this->_leaf && node->right_ == this->_leaf) {
 				if (node->color_ || node == this->_root) {
+					node->parent_->left_ == node ? node->parent_->left_ = this->_leaf : node->parent_->right_ = this->_leaf;
 					this->_alloc.destroy(&node->data_);
 					this->_node_alloc.deallocate(node, 1);
 				}
@@ -131,12 +132,12 @@ namespace ft {
 				node_type	*tmp = node->left_ == this->_leaf ? this->minValNode(node->right_) : this->maxValNode(node->left_);
 				if (tmp->left_ != this->_leaf || tmp->right_ != this->_leaf) {
 					if (tmp->left_ != this->_leaf) {
-						tmp->color_ = false;
+						tmp->left_->color_ = false;
 						tmp->left_->parent_ = tmp->parent_;
 						tmp->parent_->left_ == tmp ? tmp->parent_->left_ = tmp->left_ : tmp->parent_->right_ = tmp->left_;
 					}
 					else {
-						tmp->color_ = false;
+						tmp->right_->color_ = false;
 						tmp->right_->parent_ = tmp->parent_;
 						tmp->parent_->left_ == tmp ? tmp->parent_->left_ = tmp->right_ : tmp->parent_->right_ = tmp->right_;
 					}
@@ -218,8 +219,7 @@ namespace ft {
 				uncle->color_ = false;
 				if (node->parent_->parent_ != this->_root)
 					node->parent_->parent_->color_ = true;
-				if (node->parent_->parent_ != this->_root)
-					return (balanceInsertRB(node->parent_->parent_));
+				return (balanceInsertRB(node->parent_->parent_));
 			}
 			else {
 				node_type	*parent = node->parent_;
@@ -241,12 +241,11 @@ namespace ft {
 		}
 
 		node_type	*balanceDelRB(node_type	*db_node) {
-			if (db_node->parent_ == NULL) {
+			if (db_node == this->_root) {
 				db_node->color_ = false;
 				return (db_node);
 			}
-			node_type	*sibling;
-			db_node->parent_->right_ == db_node ? sibling = db_node->parent_->left_ : sibling = db_node->parent_->right_;
+			node_type	*sibling = db_node->parent_->right_ == db_node ? db_node->parent_->left_ : db_node->parent_->right_;
 			if (sibling->color_) {
 				if (sibling->color_ != db_node->parent_->color_) {
 					bool	tmp_color = db_node->parent_->color_;
@@ -297,45 +296,47 @@ namespace ft {
 			return (db_node);
 		}
 
-		node_type	*rotateLeft(node_type *node) {
-			node_type	*tmpA = node->right_;
-			node_type	*tmpB = tmpA->left_;
-			node_type	*tmparent = node->parent_;
-
-			tmpA->left_ = node;
-			node->right_ = tmpB;
-			node->parent_ = tmpA;
-			tmpA->parent_ = tmparent;
-			if (tmpB != this->_leaf)
-				tmpB->parent_ = node;
-			if (tmpA->parent_ == NULL)
-				this->_root = tmpA;
+		void	rotateLeft(node_type *node) {
+			node_type	*tmp_a = node;
+			node_type	*tmp_b = node->right_->left_;
+			
+			node = node->right_;
+			node->left_ = tmp_a;
+			tmp_a->right_ = tmp_b;
+			node->parent_ = tmp_a->parent_;
+			if (tmp_b)
+				tmp_b->parent_ = tmp_a;
+			if (node->parent_)
+				tmp_a == tmp_a->parent_->right_ ? node->parent_->right_ = node : node->parent_->left_ = node;
 			else
-				tmpA->parent_->right_ = tmpA;
-			return (tmpA);
+				this->_root = node;
+			tmp_a->parent_ = node;
 		}
 
-		node_type	*rotateRight(node_type *node) {
-			node_type	*tmpA = node->left_;
-			node_type	*tmpB = tmpA->right_;
-			node_type	*tmparent = node->parent_;
-
-			tmpA->right_ = node;
-			node->left_ = tmpB;
-			node->parent_ = tmpA;
-			tmpA->parent_ = tmparent;
-			if (tmpB != this->_leaf)
-				tmpB->parent_ = node;
-			if (tmpA->parent_ == NULL)
-				this->_root = tmpA;
+		void	rotateRight(node_type *node) {
+			node_type	*tmp_a = node;
+			node_type	*tmp_b = node->left_->right_;
+			
+			node = node->left_;
+			node->right_ = tmp_a;
+			tmp_a->left_ = tmp_b;
+			node->parent_ = tmp_a->parent_;
+			if (tmp_b)
+				tmp_b->parent_ = tmp_a;
+			if (node->parent_)
+				tmp_a == tmp_a->parent_->right_ ? node->parent_->right_ = node : node->parent_->left_ = node;
 			else
-				tmpA->parent_->left_ = tmpA;
-			return (tmpA);
+				this->_root = node;
+			tmp_a->parent_ = node;
 		}
 
 	/******************************************_PRINT_TREE_******************************************/
 
 		void	aff_node(node_type *node) const {
+			if (!node) {
+				std::cout << "NULL" << std::endl;
+				return ;
+			}
 			std::string	color;
 			node->color_ ? color = "red" : color = "black";			
 			std::cout << node->data_.first << " | " << node->data_.second << " | " << color << std::endl;
@@ -384,7 +385,7 @@ namespace ft {
 		}
 		
 		node_type	*replaceNode(node_type *to_replace, node_type *replace) {
-			if (to_replace->parent_ == NULL)
+			if (to_replace == this->_root)
 				this->_root = replace;
 			if (replace != this->_root)
 				to_replace->parent_->left_ == to_replace ? to_replace->parent_->left_ = replace : to_replace->parent_->right_ = replace;

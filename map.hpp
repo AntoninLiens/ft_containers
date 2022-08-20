@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/18 18:32:18 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/20 19:34:32 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,10 @@ namespace ft {
 		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()) {}
 
 		template <class InputIterator>
-  		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
+  		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()) {
+			this->insert(first, last);
+		}
 
 		map(const map& x);
 
