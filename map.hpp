@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/20 19:34:32 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/22 18:01:10 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,11 @@ namespace ft {
 	/******************************************_CONSTRUCTORS_******************************************/
 
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()) {}
+		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()), _size(0), _val_cmp(value_compare(comp)) {}
 
 		template <class InputIterator>
   		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()) {
+		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()), _size(0), _val_cmp(value_compare(comp)) {
 			this->insert(first, last);
 		}
 
@@ -118,7 +118,7 @@ namespace ft {
 		}
 
 		size_type	size(void) const {
-			return (this->_tree.nodeCount(this->_tree.get_root()));
+			return (this->_size);
 		}
 
 		size_type	max_size(void) const {
@@ -137,40 +137,52 @@ namespace ft {
 			iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), val), this->_tree.get_leaf());
 			bool	b2o = inserted.get_node()->temp_ ? true : false;
 			inserted.get_node()->temp_ = false;
+			this->_size++;
 			return (ft::make_pair(inserted, b2o));
 		}
 		
 		iterator	insert(iterator position, const value_type& val) {
 			iterator	inserted(this->_tree.insertNode(position.get_node(), val), this->_tree.get_leaf());
-			if (inserted.get_node()->temp_)
-				inserted.get_node()->temp_ = false;
+			if (!inserted.get_node()->temp_)
+				this->_size++;
+			inserted.get_node()->temp_ = false;
 			return (inserted);
 		}
 		
 		template <class InputIterator>
 		void	insert(InputIterator first, InputIterator last) {
-			for (; first != last; first++)
-				this->_tree.insertNode(this->_tree.get_root(), *first);
+			for (; first != last; first++) {
+				iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), *first), this->_tree.get_leaf());
+				if (!inserted.get_node()->temp_)
+					this->_size++;
+				inserted.get_node()->temp_ = false;
+			}
 		}
 
 	    void	erase(iterator position) {
-			this->_tree.deleteNode(this->_tree.get_root(), position.get_node().first);
+			if (this->_tree.deleteNode(this->_tree.get_root(), position.get_node().first) != this->_tree.get_leaf())
+				this->_size--;
 		}
 		
 		size_type	erase(const key_type& k) {
-			this->_tree.deleteNode(this->_tree.get_root(), k);
+			if (this->_tree.deleteNode(this->_tree.get_root(), k) == this->_tree.get_leaf());
+				return (0);
+			this->_size--;
 			return (1);
 		}
 	    
 		void	erase(iterator first, iterator last) {
-			for (; first != last; first++)
-				this->_tree.deleteNode(this->_tree.get_root(), first.get_node().first);
+			for (; first != last; first++) {
+				if (this->_tree.deleteNode(this->_tree.get_root(), first.get_node().first) != this->_tree.get_leaf())
+					this->_size--;
+			}
 		}
 
 		void	swap(map& x);
 
 		void	clear(void) {
 			this->_tree.set_root(this->_tree.destroyRBTree(this->_tree.get_root()));
+			this->_size = 0;
 		}
 
 	/******************************************_OBSERVERS_******************************************/
@@ -179,7 +191,9 @@ namespace ft {
 			return (this->_cmp);
 		}
 
-		// value_compare	value_comp() const;
+		// value_compare	value_comp(void) const {
+		// 	return (this->_val_cmp);
+		// }
 
 	/******************************************_OPERATIONS_******************************************/
 
@@ -225,7 +239,26 @@ namespace ft {
 		allocator_type		_alloc;
 		key_compare			_cmp;
 		ft::RBTree<Key, T>	_tree;
+		size_type			_size;
 
+		class value_compare : public std::binary_function<value_type, value_type, bool> {
+			friend class map;
+		protected:
+			key_compare _cmp;
+			value_compare(key_compare c) : _cmp(c) {}
+
+		public:
+			typedef bool result_type;
+			typedef value_type first_argument_type;
+			typedef value_type second_argument_type;
+			bool operator() (const value_type& x, const value_type& y) const {
+				return this->_cmp(x.first, y.first);
+			}
+	
+		};
+
+		value_compare		_val_cmp;
+		
 	};
 
 }

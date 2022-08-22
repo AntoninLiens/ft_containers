@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/20 20:17:06 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/22 18:51:08 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ namespace ft {
 		}
 
 		RBTree(const RBTree& tree)
-		: _cmp(tree.get_compare()), _alloc(tree.get_allocator()), _node_alloc(tree.get_node_alloc()), _root(tree.get_root()) {}
+		: _root(tree.get_root()), _cmp(tree.get_compare()), _alloc(tree.get_allocator()), _node_alloc(tree.get_node_alloc()) {}
 
 	/******************************************_DESTRUCTOR_******************************************/
 
@@ -125,6 +125,8 @@ namespace ft {
 					node_type	*db_node = newNode(value_type(), false, true);
 					db_node->parent_ = node->parent_;
 					node->parent_->left_ == node ? node->parent_->left_ = db_node : node->parent_->right_ = db_node;
+					this->_alloc.destroy(&node->data_);
+					this->_node_alloc.deallocate(node, 1);
 					this->balanceDelRB(db_node);
 				}
 			}
@@ -389,14 +391,16 @@ namespace ft {
 				this->_root = replace;
 			if (replace != this->_root)
 				to_replace->parent_->left_ == to_replace ? to_replace->parent_->left_ = replace : to_replace->parent_->right_ = replace;
-			if (to_replace->left_)
+			if (to_replace->left_ != this->_leaf)
 				to_replace->left_->parent_ = replace;
-			if (to_replace->right_)
+			if (to_replace->right_ != this->_leaf)
 				to_replace->right_->parent_ = replace;
 			replace->parent_ = to_replace->parent_;
 			replace->left_ = to_replace->left_;
 			replace->right_ = to_replace->right_;
 			replace->color_ = to_replace->color_;
+			this->_alloc.destroy(&to_replace->data_);
+			this->_node_alloc.deallocate(to_replace, 1);
 			return (replace);
 		}
 

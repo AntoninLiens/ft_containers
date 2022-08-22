@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/20 20:10:34 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/22 18:51:27 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,11 @@ int main(void) {
 
 	map.erase(6);
 	map.erase(5);
+	map.erase(1);
 	map.erase(84);
 	map.erase(19);
 	map.erase(101);
+	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 	map.erase(1000);
 	map.erase(420);
 
