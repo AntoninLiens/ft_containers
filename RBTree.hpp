@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/22 18:51:08 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/23 19:12:58 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ namespace ft {
 		typedef ft::pair<const Key, T>								value_type;
 		typedef Compare												key_compare;
 		typedef std::allocator<ft::pair<const Key,T> >				allocator_type;
-		typedef std::allocator<ft::Node<const Key,T> >				node_allocator_type;
+		typedef std::allocator<ft::Node<Key,T> >				node_allocator_type;
 		typedef int													difference_type;
 		typedef size_t												size_type;
 
@@ -155,6 +155,7 @@ namespace ft {
 						db_node->parent_ = tmp->parent_;
 						tmp->parent_->left_ == tmp ? tmp->parent_->left_ = db_node : tmp->parent_->right_ = db_node;
 						node = this->replaceNode(node, tmp);
+						this->aff_node(db_node->parent_);
 						this->balanceDelRB(db_node);
 					}
 				}
@@ -435,13 +436,13 @@ namespace ft {
 				tmp = tmp->right_;
 			return (tmp);
 		}
-		node_type	*maxValNode(node_type *node) {
+		node_type	*maxValNode(node_type *node) const {
 			if (node != this->_leaf && node->right_ != this->_leaf)
 				node = this->maxValNode(node->right_);
 			return (node);
 		}
 
-		node_type	*minValNode(node_type *node) {
+		node_type	*minValNode(node_type *node) const {
 			if (node != this->_leaf && node->left_ != this->_leaf)
 				node = this->minValNode(node->left_);
 			return (node);

@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/20 16:59:49 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/23 18:41:32 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -399,11 +399,11 @@ namespace ft {
 
 	/******************************************_CONSTRUCTORS_******************************************/
 
-		map_iterator(void) : _node(NULL), _leaf(NULL) {}
+		map_iterator(void) : _node(NULL), _root(NULL), _leaf(NULL) {}
 
-		map_iterator(pointer node, pointer leaf) : _node(node), _leaf(leaf) {}
+		map_iterator(pointer node, pointer root, pointer leaf) : _node(node), _root(root), _leaf(leaf) {}
 
-		map_iterator(const map_iterator<T, Node>& it) : _node(it.get_node()), _leaf(it.get_leaf()) {}
+		map_iterator(const map_iterator<T, Node>& it) : _node(it.get_node()), _root(it.get_root()), _leaf(it.get_leaf()) {}
 
 	/******************************************_DESTRUCTOR_******************************************/
 
@@ -421,6 +421,10 @@ namespace ft {
 
 		pointer	get_node(void) const {
 			return (this->_node);
+		}
+
+		pointer	get_root(void) const {
+			return (this->_root);
 		}
 
 		pointer	get_leaf(void) const {
@@ -448,7 +452,7 @@ namespace ft {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
 			this->_node = this->next(this->_node);
-			return (map_iterator(tmp, this->_leaf));
+			return (map_iterator(tmp, this->_root, this->_leaf));
 		}
 
 		map_iterator&	operator--(void) {
@@ -460,7 +464,7 @@ namespace ft {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
 			this->_node = this->prev(this->_node);
-			return (map_iterator(tmp, this->_leaf));
+			return (map_iterator(tmp, this->_root, this->_leaf));
 		}
 
 		/******************************************_UTILS_******************************************/
@@ -476,23 +480,25 @@ namespace ft {
 
 			if (node->right_ == this->_leaf) {
 				tmp = node;
-				while (tmp->parent_ != this->_leaf && tmp == tmp->parent_->right_)
+				while (tmp->parent_ && tmp == tmp->parent_->right_)
 					tmp = tmp->parent_;
 				tmp = tmp->parent_;
-				return (tmp);
+				return (tmp ? tmp : this->_leaf);
 			}
 			tmp = node->right_;
 			while (tmp->left_ != this->_leaf)
 				tmp = tmp->left_;
-			return (tmp);
+			return (tmp ? tmp : this->_leaf);
 		}
 
 		node_type	*prev(node_type *node) {
+			if (node == this->_leaf)
+				return (this->maxValNode(this->_root));
+			
 			node_type	*tmp;
-
 			if (node->left_ == this->_leaf) {
 				tmp = node;
-				while (tmp->parent_ != this->_leaf && tmp == tmp->parent_->left_)
+				while (tmp->parent_ && tmp == tmp->parent_->left_)
 					tmp = tmp->parent_;
 				tmp = tmp->parent_;
 				return (tmp);
@@ -503,8 +509,21 @@ namespace ft {
 			return (tmp);
 		}
 
+		node_type	*maxValNode(node_type *node) const {
+			if (node != this->_leaf && node->right_ != this->_leaf)
+				node = this->maxValNode(node->right_);
+			return (node);
+		}
+
+		node_type	*minValNode(node_type *node) const {
+			if (node != this->_leaf && node->left_ != this->_leaf)
+				node = this->minValNode(node->left_);
+			return (node);
+		}
+
 	private:
 		pointer	_node;
+		pointer	_root;
 		pointer	_leaf;
 
 	};
