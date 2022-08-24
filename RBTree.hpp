@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RBTree.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
+/*   By: aliens <aliens@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/23 19:12:58 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/24 15:02:21 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,6 @@ namespace ft {
 						db_node->parent_ = tmp->parent_;
 						tmp->parent_->left_ == tmp ? tmp->parent_->left_ = db_node : tmp->parent_->right_ = db_node;
 						node = this->replaceNode(node, tmp);
-						this->aff_node(db_node->parent_);
 						this->balanceDelRB(db_node);
 					}
 				}
@@ -165,7 +164,7 @@ namespace ft {
 
 	/******************************************_OPERATIONS_******************************************/
 
-		node_type	*searchNode(node_type *node, key_type key) {
+		node_type	*searchNode(node_type *node, key_type key) const {
 			if (node == this->_leaf)
 				return (node);
 			else if (this->_cmp(key, node->data_.first))
@@ -175,7 +174,7 @@ namespace ft {
 			return (node);
 		}
 
-		node_type	*findNode(node_type *node, key_type key) {
+		node_type	*findNode(node_type *node, key_type key) const {
 			while (node != this->_leaf) {
 				if (this->_cmp(key, node->data_.first)) {
 					node = node->left_;
@@ -191,7 +190,7 @@ namespace ft {
 			return (this->_leaf);
 		}
 
-		node_type	*findParentNode(node_type *node, key_type key) {
+		node_type	*findParentNode(node_type *node, key_type key) const {
 			node_type	*parent;
 			while (node != this->_leaf) {
 				parent = node;
@@ -405,7 +404,7 @@ namespace ft {
 			return (replace);
 		}
 
-		node_type	*next(node_type *node) {
+		node_type	*next(node_type *node) const {
 			node_type	*tmp;
 
 			if (node->right_ == this->_leaf) {
@@ -421,9 +420,11 @@ namespace ft {
 			return (tmp);
 		}
 
-		node_type	*prev(node_type *node) {
+		node_type	*prev(node_type *node) const{
+			if (node == this->_leaf)
+				return (this->maxValNode(this->_root));
+			
 			node_type	*tmp;
-
 			if (node->left_ == this->_leaf) {
 				tmp = node;
 				while (tmp->parent_ != this->_leaf && tmp == tmp->parent_->left_)

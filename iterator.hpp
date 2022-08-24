@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   iterator.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
+/*   By: aliens <aliens@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/23 18:41:32 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/24 14:14:45 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -394,7 +394,7 @@ namespace ft {
 	/******************************************_CONST_OPERATOR_******************************************/
 
 		operator map_iterator<const T, Node>() const {
-			return (this->_node);
+			return (map_iterator<const T, Node>(this->_node, this->_root, this->_leaf));
 		}
 
 	/******************************************_CONSTRUCTORS_******************************************/

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
+/*   By: aliens <aliens@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/23 18:39:46 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/24 15:05:15 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,38 @@ namespace ft {
 		typedef ptrdiff_t												difference_type;
 		typedef size_t													size_type;
 
+	private:
+		class value_compare : public std::binary_function<value_type, value_type, bool> {
+			friend class map;
+		protected:
+			key_compare _cmp;
+			value_compare(key_compare c) : _cmp(c) {}
+
+		public:
+			typedef bool result_type;
+			typedef value_type first_argument_type;
+			typedef value_type second_argument_type;
+			bool operator() (const value_type& x, const value_type& y) const {
+				return this->_cmp(x.first, y.first);
+			}
+	
+		};
+		
+		allocator_type		_alloc;
+		key_compare			_cmp;
+		ft::RBTree<Key, T>	_tree;
+		size_type			_size;
+
+	public:
+
 	/******************************************_CONSTRUCTORS_******************************************/
 
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()), _size(0), _val_cmp(value_compare(comp)) {}
+		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()), _size(0) {}
 
 		template <class InputIterator>
   		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()), _size(0), _val_cmp(value_compare(comp)) {
+		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()), _size(0) {
 			this->insert(first, last);
 		}
 
@@ -71,6 +95,10 @@ namespace ft {
 
 		ft::RBTree<Key, T>	get_tree() const {
 			return (this->_tree);
+		}
+
+		void	aff_node(node_type *node) const {
+			this->_tree.aff_node(node);
 		}
 
 		void	aff_tree(void) const {
@@ -192,9 +220,9 @@ namespace ft {
 			return (this->_cmp);
 		}
 
-		// value_compare	value_comp(void) const {
-		// 	return (this->_val_cmp);
-		// }
+		value_compare	value_comp(void) const {
+			return (value_compare(this->_cmp));
+		}
 
 	/******************************************_OPERATIONS_******************************************/
 
@@ -214,51 +242,43 @@ namespace ft {
 
 		iterator	lower_bound(const key_type& k) {
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
+			if (node == this->_tree.get_leaf())
+				return (iterator(this->_tree.minValNode(this->_tree.get_root()), this->_tree.get_root(), this->_tree.get_leaf()));
 			return (iterator(this->_tree.minValNode(node), this->_tree.get_root(), this->_tree.get_leaf()));
 		}
 		
 		const_iterator	lower_bound(const key_type& k) const {
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
+			if (node == this->_tree.get_leaf())
+				return (const_iterator(this->_tree.minValNode(this->_tree.get_root()), this->_tree.get_root(), this->_tree.get_leaf()));
 			return (const_iterator(this->_tree.minValNode(node), this->_tree.get_root(), this->_tree.get_leaf()));
 		}
 
 	    iterator	upper_bound(const key_type& k) {
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
-			return (iterator(this->_tree.maxValNode(node), this->_tree.get_root(), this->_tree.get_leaf()));
+			if (node == this->_tree.get_leaf())
+				return (iterator(this->_tree.minValNode(this->_tree.get_root()), this->_tree.get_root(), this->_tree.get_leaf()));
+			return (iterator(this->_tree.next(node), this->_tree.get_root(), this->_tree.get_leaf()));
 		}
 		
 		const_iterator	upper_bound(const key_type& k) const {
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
-			return (const_iterator(this->_tree.maxValNode(node), this->_tree.get_root(), this->_tree.get_leaf()));
+			if (node == this->_tree.get_leaf())
+				return (const_iterator(this->_tree.minValNode(this->_tree.get_root()), this->_tree.get_root(), this->_tree.get_leaf()));
+			return (const_iterator(this->_tree.next(node), this->_tree.get_root(), this->_tree.get_leaf()));
 		}
 
-		pair<const_iterator,const_iterator>	equal_range(const key_type& k) const;
+		pair<const_iterator,const_iterator>	equal_range(const key_type& k) const {
+			const_iterator	end = this->upper_bound(k);
+			const_iterator	begin = this->lower_bound(k) != this->end() ? this->lower_bound(k) : this->upper_bound(k);
+			return (ft::make_pair(begin, end));
+		}
 		
-		pair<iterator,iterator>	equal_range(const key_type& k);
-
-	private:
-		allocator_type		_alloc;
-		key_compare			_cmp;
-		ft::RBTree<Key, T>	_tree;
-		size_type			_size;
-
-		class value_compare : public std::binary_function<value_type, value_type, bool> {
-			friend class map;
-		protected:
-			key_compare _cmp;
-			value_compare(key_compare c) : _cmp(c) {}
-
-		public:
-			typedef bool result_type;
-			typedef value_type first_argument_type;
-			typedef value_type second_argument_type;
-			bool operator() (const value_type& x, const value_type& y) const {
-				return this->_cmp(x.first, y.first);
-			}
-	
-		};
-
-		value_compare		_val_cmp;
+		pair<iterator,iterator>	equal_range(const key_type& k) {
+			iterator	end = this->upper_bound(k);
+			iterator	begin = this->lower_bound(k) != this->end() ? this->lower_bound(k) : this->upper_bound(k);
+			return (ft::make_pair(begin, end));
+		}
 		
 	};
 
