@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   iterator.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aliens <aliens@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/24 14:14:45 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/24 19:13:07 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -414,6 +414,9 @@ namespace ft {
 		map_iterator&	operator=(const map_iterator& it) {
 			if (it.get_node() != this->_node)
 				this->_node = it.get_node();
+			if (it.get_root != this->_root)
+				this->_root = it.get_root();
+			this->_leaf = it.get_leaf();
 			return (*this);
 		}
 
@@ -475,7 +478,7 @@ namespace ft {
 			std::cout << node->data_.first << " | " << node->data_.second << " | " << color << std::endl;
 		}
 
-		node_type	*next(node_type *node) {
+		node_type	*next(node_type *node) const {
 			node_type	*tmp;
 
 			if (node->right_ == this->_leaf) {
@@ -491,11 +494,10 @@ namespace ft {
 			return (tmp ? tmp : this->_leaf);
 		}
 
-		node_type	*prev(node_type *node) {
+		node_type	*prev(node_type *node) const {
+			node_type	*tmp;
 			if (node == this->_leaf)
 				return (this->maxValNode(this->_root));
-			
-			node_type	*tmp;
 			if (node->left_ == this->_leaf) {
 				tmp = node;
 				while (tmp->parent_ && tmp == tmp->parent_->left_)

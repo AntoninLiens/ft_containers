@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RBTree.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aliens <aliens@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/24 15:02:21 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/24 19:11:28 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,6 @@ namespace ft {
 			this->_leaf->parent_ = NULL;
 			this->_root = this->_leaf;
 		}
-
-		RBTree(const RBTree& tree)
-		: _root(tree.get_root()), _cmp(tree.get_compare()), _alloc(tree.get_allocator()), _node_alloc(tree.get_node_alloc()) {}
 
 	/******************************************_DESTRUCTOR_******************************************/
 
@@ -116,7 +113,12 @@ namespace ft {
 			if (node == this->_leaf)
 				return (node);
 			if (node->left_ == this->_leaf && node->right_ == this->_leaf) {
-				if (node->color_ || node == this->_root) {
+				if (node == this->_root) {
+					this->_alloc.destroy(&node->data_);
+					this->_node_alloc.deallocate(node, 1);
+					this->_root = this->_leaf;
+				}
+				else if (node->color_) {
 					node->parent_->left_ == node ? node->parent_->left_ = this->_leaf : node->parent_->right_ = this->_leaf;
 					this->_alloc.destroy(&node->data_);
 					this->_node_alloc.deallocate(node, 1);
@@ -282,8 +284,7 @@ namespace ft {
 				}
 				else {
 					node_type	*tmparent = db_node->parent_;
-					if (sibling != this->_leaf)
-						sibling->color_ = true;
+					sibling->color_ = true;
 					if (db_node->temp_) {
 						db_node->parent_->left_ == db_node ? db_node->parent_->left_ = this->_leaf : db_node->parent_->right_ = this->_leaf;
 						this->_alloc.destroy(&db_node->data_);

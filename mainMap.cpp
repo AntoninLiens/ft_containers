@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/23 17:17:03 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/24 19:05:58 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <sys/wait.h>
 
 int main(void) {
-	ft::map<const int, char>	map;
+	ft::map<int, char>	map;
 
 	map.insert(ft::make_pair(5, 65));
 	map.insert(ft::make_pair(6, 65));
@@ -38,26 +38,40 @@ int main(void) {
 
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
-	ft::map<const int, char>::iterator	it = map.begin();
-	ft::map<const int, char>::iterator	it2 = map.end();
+	{ ft::map<int, char>::iterator	it = map.begin();
+	ft::map<int, char>::iterator	it2 = map.end();
 	for (;it != it2; it++)
 		std::cout << it->first << " | " << it->second << std::endl;
-
+	}
+	
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
 	map.erase(6);
 	map.erase(5);
 	map.erase(1);
 	map.erase(84);
-	// map.erase(19);
-	// map.erase(101);
-	// std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
-	// map.erase(1000);
-	// map.erase(420);
-
+	map.erase(19);
+	map.erase(101);
+	map.erase(1000);
+	map.erase(8);
+	map.erase(420);
+	map.erase(42);
+	map.erase(-4);
+	map.erase(2);
+	map.erase(7);
+	map.erase(18);
+	map.erase(69);
+	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 	map.aff_tree();
 
-	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+
+
+	// { ft::map<int, char>::iterator	it = map.begin();
+	// ft::map<int, char>::iterator	it2 = map.end();
+	// for (;it2 != it; --it2)
+	// 	std::cout << it2->first << " | " << it2->second << std::endl;
+	// }
+
 	// ft::RBTree<const int, char>	binaryTree;
 
 	// binaryTree.insertNode(binaryTree.get_root(), ft::make_pair(50, 65));
