@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mainMap.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
+/*   By: aliens <aliens@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/24 19:05:58 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/25 13:53:03 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,23 @@ int main(void) {
 	map.aff_tree();
 
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+	
 
 	{ ft::map<int, char>::iterator	it = map.begin();
 	ft::map<int, char>::iterator	it2 = map.end();
 	for (;it != it2; it++)
+		// std::cout << "coucou\n";
 		std::cout << it->first << " | " << it->second << std::endl;
 	}
 	
+	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+
+	{ ft::map<int, char>::iterator	it = map.begin();
+	ft::map<int, char>::iterator	it2 = map.end();
+	for (;it2 != it; --it2)
+		std::cout << it2->first << " | " << it2->second << std::endl;
+	}
+
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 
 	map.erase(6);
@@ -61,16 +71,13 @@ int main(void) {
 	map.erase(7);
 	map.erase(18);
 	map.erase(69);
+	
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+	
 	map.aff_tree();
 
 
 
-	// { ft::map<int, char>::iterator	it = map.begin();
-	// ft::map<int, char>::iterator	it2 = map.end();
-	// for (;it2 != it; --it2)
-	// 	std::cout << it2->first << " | " << it2->second << std::endl;
-	// }
 
 	// ft::RBTree<const int, char>	binaryTree;
 
