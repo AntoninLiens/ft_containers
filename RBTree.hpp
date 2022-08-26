@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RBTree.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aliens <aliens@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/25 13:43:47 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/26 20:52:46 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,15 +215,16 @@ namespace ft {
 		node_type	*balanceInsertRB(node_type *node) {
 			if (node == this->_leaf || node->parent_ == this->_root)
 				return (node);
-			if (node == this->_root || !node->parent_->color_)
+			if (!node->parent_->color_)
 				return (node);
 			node_type	*uncle = node->parent_->parent_->left_ == node->parent_ ? node->parent_->parent_->right_ : node->parent_->parent_->left_;
 			if (uncle->color_) {
 				node->parent_->color_ = false;
 				uncle->color_ = false;
-				if (node->parent_->parent_ != this->_root)
+				if (node->parent_->parent_ != this->_root) {
 					node->parent_->parent_->color_ = true;
-				return (balanceInsertRB(node->parent_->parent_));
+					return (balanceInsertRB(node->parent_->parent_));
+				}
 			}
 			else {
 				node_type	*parent = node->parent_;

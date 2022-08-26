@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   iterator.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aliens <aliens@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/25 13:57:09 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/26 18:36:06 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -394,16 +394,16 @@ namespace ft {
 	/******************************************_CONST_OPERATOR_******************************************/
 
 		operator map_iterator<const T, Node>() const {
-			return (map_iterator<const T, Node>(this->_node, this->_root, this->_leaf));
+			return (map_iterator<const T, Node>(this->_node, this->_leaf));
 		}
 
 	/******************************************_CONSTRUCTORS_******************************************/
 
-		map_iterator(void) : _node(NULL), _root(NULL), _leaf(NULL) {}
+		map_iterator(void) : _node(NULL), _leaf(NULL) {}
 
-		map_iterator(pointer node, pointer root, pointer leaf) : _node(node), _root(root), _leaf(leaf) {}
+		map_iterator(pointer node, pointer leaf) : _node(node), _leaf(leaf) {}
 
-		map_iterator(const map_iterator<T, Node>& it) : _node(it.get_node()), _root(it.get_root()), _leaf(it.get_leaf()) {}
+		map_iterator(const map_iterator<T, Node>& it) : _node(it.get_node()), _leaf(it.get_leaf()) {}
 
 	/******************************************_DESTRUCTOR_******************************************/
 
@@ -412,10 +412,7 @@ namespace ft {
 	/******************************************_ASSIGN_OPERATOR_******************************************/
 
 		map_iterator&	operator=(const map_iterator& it) {
-			if (it.get_node() != this->_node)
-				this->_node = it.get_node();
-			if (it.get_root() != this->_root)
-				this->_root = it.get_root();
+			this->_node = it.get_node();
 			this->_leaf = it.get_leaf();
 			return (*this);
 		}
@@ -425,11 +422,7 @@ namespace ft {
 		pointer	get_node(void) const {
 			return (this->_node);
 		}
-
-		pointer	get_root(void) const {
-			return (this->_root);
-		}
-
+		
 		pointer	get_leaf(void) const {
 			return (this->_leaf);
 		}
@@ -455,7 +448,7 @@ namespace ft {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
 			this->_node = this->next(this->_node);
-			return (map_iterator(tmp, this->_root, this->_leaf));
+			return (map_iterator(tmp, this->_leaf));
 		}
 
 		map_iterator&	operator--(void) {
@@ -467,7 +460,7 @@ namespace ft {
 			static_cast<void>(n);
 			pointer	tmp = this->_node;
 			this->_node = this->prev(this->_node);
-			return (map_iterator(tmp, this->_root, this->_leaf));
+			return (map_iterator(tmp, this->_leaf));
 		}
 
 		/******************************************_UTILS_******************************************/
@@ -494,9 +487,11 @@ namespace ft {
 		}
 
 		node_type	*prev(node_type *node) const {
+			node_type	*tmp = this->_node;
+			while (tmp->parent_)
+				tmp = tmp->parent_;
 			if (node == this->_leaf)
-				return (this->maxValNode(this->_root));
-			node_type	*tmp;
+				return (this->maxValNode(tmp));
 			if (node->left_ == this->_leaf) {
 				tmp = node;
 				while (tmp->parent_ && tmp == tmp->parent_->left_)
@@ -524,7 +519,6 @@ namespace ft {
 
 	private:
 		pointer	_node;
-		pointer	_root;
 		pointer	_leaf;
 
 	};

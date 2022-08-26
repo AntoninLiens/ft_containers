@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mainMap.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aliens <aliens@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/25 13:53:03 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/26 18:21:32 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,69 +14,102 @@
 #include <sys/wait.h>
 
 int main(void) {
-	ft::map<int, char>	map;
+	// ft::map<int, char>	map;
 
-	map.insert(ft::make_pair(5, 65));
-	map.insert(ft::make_pair(6, 65));
-	map.insert(ft::make_pair(7, 65));
-	map.insert(ft::make_pair(8, 65));
-	map.insert(ft::make_pair(18, 65));
-	map.insert(ft::make_pair(1, 65));
-	map.insert(ft::make_pair(-4, 65));
-	map.insert(ft::make_pair(1000, 65));
-	map.insert(ft::make_pair(2, 65));
-	map.insert(ft::make_pair(84, 65));
-	map.insert(ft::make_pair(69, 65));
-	map.insert(ft::make_pair(420, 65));
-	map.insert(ft::make_pair(42, 65));
-	map.insert(ft::make_pair(19, 65));
-	map.insert(ft::make_pair(101, 65));
+	// map.insert(ft::make_pair(5, 65));
+	// map.insert(ft::make_pair(6, 65));
+	// map.insert(ft::make_pair(7, 65));
+	// map.insert(ft::make_pair(8, 65));
+	// map.insert(ft::make_pair(18, 65));
+	// map.insert(ft::make_pair(1, 65));
+	// map.insert(ft::make_pair(-4, 65));
+	// map.insert(ft::make_pair(1000, 65));
+	// map.insert(ft::make_pair(2, 65));
+	// map.insert(ft::make_pair(84, 65));
+	// map.insert(ft::make_pair(69, 65));
+	// map.insert(ft::make_pair(420, 65));
+	// map.insert(ft::make_pair(42, 65));
+	// map.insert(ft::make_pair(19, 65));
+	// map.insert(ft::make_pair(101, 65));
+
+	// std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+	
+	// map.aff_tree();
+
+	// std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+	
+
+	// { ft::map<int, char>::iterator	it = map.begin();
+	// ft::map<int, char>::iterator	it2 = map.end();
+	// for (;it != it2; ++it)
+	// 	std::cout << it->first << " | " << it->second << std::endl;
+	// }
+	
+	// std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+
+	// { ft::map<int, char>::iterator	it = map.begin();
+	// ft::map<int, char>::iterator	it2 = map.end();
+	// for (;it2 != it; --it2)
+	// 	std::cout << it2->first << " | " << it2->second << std::endl;
+	// }
+	
+	// std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+
+	// {
+	// ft::map<int, char>::iterator	it = --(--(--map.end()));
+	// map.aff_node(it.get_node());
+	// }
+
+	// std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+
+	// map.erase(6);
+	// map.erase(5);
+	// map.erase(1);
+	// map.erase(84);
+	// map.erase(19);
+	// map.erase(101);
+	// map.erase(1000);
+	// map.erase(8);
+	// map.erase(420);
+	// map.erase(42);
+	// map.erase(-4);
+	// map.erase(2);
+	// map.erase(7);
+	// map.erase(18);
+	// map.erase(69);
+	
+	// std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+	
+	// map.aff_tree();
+
+	// std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+
+	ft::map<int, char>	map2;
+
+	for (int i = 0; i < 10; i++)
+		map2.insert(ft::make_pair(i, i + 65));
+
+	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+
+	map2.aff_tree();
 
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 	
-	map.aff_tree();
+	ft::map<int, char>::iterator	it2 = map2.end();
+	map2.erase(1);
+	map2.erase(0);
+	// map2.erase(9);
+	map2.aff_tree();
 
-	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
 	
-
-	{ ft::map<int, char>::iterator	it = map.begin();
-	ft::map<int, char>::iterator	it2 = map.end();
-	for (;it != it2; it++)
-		// std::cout << "coucou\n";
-		std::cout << it->first << " | " << it->second << std::endl;
-	}
-	
-	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
-
-	{ ft::map<int, char>::iterator	it = map.begin();
-	ft::map<int, char>::iterator	it2 = map.end();
-	for (;it2 != it; --it2)
+	for (ft::map<int, char>::iterator it = map2.begin(); it2 != it; --it2)
 		std::cout << it2->first << " | " << it2->second << std::endl;
-	}
-
+		
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
-
-	map.erase(6);
-	map.erase(5);
-	map.erase(1);
-	map.erase(84);
-	map.erase(19);
-	map.erase(101);
-	map.erase(1000);
-	map.erase(8);
-	map.erase(420);
-	map.erase(42);
-	map.erase(-4);
-	map.erase(2);
-	map.erase(7);
-	map.erase(18);
-	map.erase(69);
-	
+	map2.erase(--(--(--map2.end())), --map2.end());
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
-	
-	map.aff_tree();
-
-
+	map2.aff_tree();
+	// map.erase();
 
 
 	// ft::RBTree<const int, char>	binaryTree;

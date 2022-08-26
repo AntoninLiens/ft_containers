@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aliens <aliens@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/25 13:50:38 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/26 20:07:30 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ namespace ft {
 		}
 
 		map(const map& x)
-		: _alloc(x.get_allocator()), _cmp(x.key_comp()), _tree(ft::RBTree<Key, T>()), _size(x.size()){
+		: _alloc(x.get_allocator()), _cmp(x.key_comp()), _tree(ft::RBTree<Key, T>()), _size(x.size()) {
 			for (const_iterator begin = x.begin(), end = x.end(); begin != end; begin++)
 				this->_tree.insertNode(this->_tree.get_root(), *begin);
 		}
@@ -120,19 +120,19 @@ namespace ft {
 	/******************************************_ITERATORS_******************************************/
 
 	    iterator	begin(void) {
-			return (iterator(this->_tree.minValNode(this->_tree.get_root()), this->_tree.get_root(), this->_tree.get_leaf()));
+			return (iterator(this->_tree.minValNode(this->_tree.get_root()), this->_tree.get_leaf()));
 		}
 		
 		const_iterator	begin(void) const {
-			return (const_iterator(this->_tree.minValNode(this->_tree.get_root()),this->_tree.get_root(), this->_tree.get_leaf()));
+			return (const_iterator(this->_tree.minValNode(this->_tree.get_root()), this->_tree.get_leaf()));
 		}
 		
 		iterator	end(void) {
-			return (iterator(this->_tree.get_leaf(), this->_tree.get_root(), this->_tree.get_leaf()));
+			return (iterator(this->_tree.get_leaf(), this->_tree.get_leaf()));
 		}
 
 		const_iterator	end(void) const {
-			return (const_iterator(this->_tree.get_leaf(), this->_tree.get_root(), this->_tree.get_leaf()));
+			return (const_iterator(this->_tree.get_leaf(), this->_tree.get_leaf()));
 		}
 
 		reverse_iterator	rbegin(void) {
@@ -168,13 +168,13 @@ namespace ft {
 	/******************************************_ELEMENT_ACCES_******************************************/
 
 		mapped_type	&operator[](const key_type& k) {
-			return (this->_tree.findNode(this->_tree.get_root(), k)->data_.second);
+			return (this->insert(ft::make_pair(k, mapped_type())).first->second);
 		}
 
 	/******************************************_MODIFIERS_******************************************/
 
 		pair<iterator,bool>	insert(const value_type& val) {
-			iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), val), this->_tree.get_root(), this->_tree.get_leaf());
+			iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), val), this->_tree.get_leaf());
 			bool	b2o = inserted.get_node()->temp_ ? false : true;
 			inserted.get_node()->temp_ = false;
 			if (b2o)
@@ -184,7 +184,7 @@ namespace ft {
 		
 		iterator	insert(iterator position, const value_type& val) {
 			static_cast<void>(position);
-			iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), val),this->_tree.get_root(), this->_tree.get_leaf());
+			iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), val), this->_tree.get_leaf());
 			if (!inserted.get_node()->temp_)
 				this->_size++;
 			inserted.get_node()->temp_ = false;
@@ -194,7 +194,7 @@ namespace ft {
 		template <class InputIterator>
 		void	insert(InputIterator first, InputIterator last) {
 			for (; first != last; first++) {
-				iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), *first), this->_tree.get_root(), this->_tree.get_leaf());
+				iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), *first), this->_tree.get_leaf());
 				if (!inserted.get_node()->temp_)
 					this->_size++;
 				inserted.get_node()->temp_ = false;
@@ -213,7 +213,7 @@ namespace ft {
 		}
 	    
 		void	erase(iterator first, iterator last) {
-			for (; first != last; first++)
+			for (; first != last; ++first)
 				this->erase(first);
 		}
 
@@ -237,11 +237,11 @@ namespace ft {
 	/******************************************_OPERATIONS_******************************************/
 
 	    iterator	find(const key_type& k) {
-			return (iterator(this->_tree.findNode(this->_tree.get_root(), k), this->_tree.get_root(), this->_tree.get_leaf()));
+			return (iterator(this->_tree.findNode(this->_tree.get_root(), k), this->_tree.get_leaf()));
 		}
 		
 		const_iterator	find(const key_type& k) const {
-			return (const_iterator(this->_tree.findNode(this->_tree.get_root(), k), this->_tree.get_root(), this->_tree.get_leaf()));
+			return (const_iterator(this->_tree.findNode(this->_tree.get_root(), k), this->_tree.get_leaf()));
 		}
 
 		size_type	count(const key_type& k) const {
@@ -254,38 +254,38 @@ namespace ft {
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
 			if (node == this->_tree.get_leaf()) {
 				node = this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first) ? this->_tree.minValNode(this->_tree.get_root()) : this->_tree.get_leaf();
-				return (iterator(node, this->_tree.get_root(), this->_tree.get_leaf()));
+				return (iterator(node, this->_tree.get_leaf()));
 			}
-			return (iterator(node, this->_tree.get_root(), this->_tree.get_leaf()));
+			return (iterator(node, this->_tree.get_leaf()));
 		}
 		
 		const_iterator	lower_bound(const key_type& k) const {
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
 			if (node == this->_tree.get_leaf()) {
 				node = this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first) ? this->_tree.minValNode(this->_tree.get_root()) : this->_tree.get_leaf();
-				return (const_iterator(node, this->_tree.get_root(), this->_tree.get_leaf()));
+				return (const_iterator(node, this->_tree.get_leaf()));
 			}
-			return (const_iterator(node, this->_tree.get_root(), this->_tree.get_leaf()));
+			return (const_iterator(node, this->_tree.get_leaf()));
 		}
 
 	    iterator	upper_bound(const key_type& k) {
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
 			if (node == this->_tree.get_leaf()) {
 				node = this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first) ? this->_tree.minValNode(this->_tree.get_root()) : this->_tree.get_leaf();
-				return (iterator(node, this->_tree.get_root(), this->_tree.get_leaf()));
+				return (iterator(node, this->_tree.get_leaf()));
 			}
 			node = node == this->_tree.maxValNode(this->_tree.get_root()) ? this->_tree.get_leaf() : this->_tree.next(node);
-			return (iterator(node, this->_tree.get_root(), this->_tree.get_leaf()));
+			return (iterator(node, this->_tree.get_leaf()));
 		}
 		
 		const_iterator	upper_bound(const key_type& k) const {
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
 			if (node == this->_tree.get_leaf()) {
 				node = this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first) ? this->_tree.minValNode(this->_tree.get_root()) : this->_tree.get_leaf();
-				return (const_iterator(node, this->_tree.get_root(), this->_tree.get_leaf()));
+				return (const_iterator(node, this->_tree.get_leaf()));
 			}
 			node = node == this->_tree.maxValNode(this->_tree.get_root()) ? this->_tree.get_leaf() : this->_tree.next(node);
-			return (const_iterator(node, this->_tree.get_root(), this->_tree.get_leaf()));
+			return (const_iterator(node, this->_tree.get_leaf()));
 		}
 
 		pair<const_iterator,const_iterator>	equal_range(const key_type& k) const {
