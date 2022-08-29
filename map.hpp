@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/26 20:07:30 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/28 18:55:13 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "pair.hpp"
 #include "RBTree.hpp"
+#include "iterator.hpp"
 
 namespace ft {
 
@@ -136,19 +137,19 @@ namespace ft {
 		}
 
 		reverse_iterator	rbegin(void) {
-			return (reverse_iterator(this->begin()));
+			return (reverse_iterator(this->end()));
 		}
 		
 		const_reverse_iterator	rbegin(void) const {
-			return (const_reverse_iterator(this->begin()));
+			return (const_reverse_iterator(this->end()));
 		}
 
       	reverse_iterator	rend(void) {
-			  return (reverse_iterator(this->end()));
+			  return (reverse_iterator(this->begin()));
 		}
 		
 		const_reverse_iterator	rend(void) const {
-			return (const_reverse_iterator(this->end()));
+			return (const_reverse_iterator(this->begin()));
 		}
 
 	/******************************************_CAPACITY_******************************************/
@@ -213,8 +214,21 @@ namespace ft {
 		}
 	    
 		void	erase(iterator first, iterator last) {
-			for (; first != last; ++first)
-				this->erase(first);
+			while (first != last) {
+				node_type	*max = this->_tree.maxValNode(this->_tree.get_root());
+				node_type	*min = this->_tree.minValNode(this->_tree.get_root());
+				node_type	*tmp = this->_tree.get_leaf();
+				while (min != max) {
+					if (min->data_.first == first->first)
+						tmp = this->_tree.next(min);
+					min = this->_tree.next(min);
+				}
+				if (max->data_.first == first->first)
+					tmp = this->_tree.get_leaf();	
+				this->erase(first->first);
+				iterator tmp2(tmp, this->_tree.get_leaf());
+				first = tmp2;
+			}
 		}
 
 		void	swap(map& x);
@@ -251,27 +265,45 @@ namespace ft {
 		}
 
 		iterator	lower_bound(const key_type& k) {
+			node_type	*parent = this->_tree.findParentNode(this->_tree.get_root(), k);
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
 			if (node == this->_tree.get_leaf()) {
-				node = this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first) ? this->_tree.minValNode(this->_tree.get_root()) : this->_tree.get_leaf();
+				if (this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first))
+					node = this->_tree.minValNode(this->_tree.get_root());
+				else if (this->_cmp(this->_tree.maxValNode(this->_tree.get_root())->data_.first, k))
+					this->_tree.get_leaf();
+				else
+					node = this->_cmp(parent->data_.first, k) ? this->_tree.next(parent) : parent;
 				return (iterator(node, this->_tree.get_leaf()));
 			}
 			return (iterator(node, this->_tree.get_leaf()));
 		}
 		
 		const_iterator	lower_bound(const key_type& k) const {
+			node_type	*parent = this->_tree.findParentNode(this->_tree.get_root(), k);
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
 			if (node == this->_tree.get_leaf()) {
-				node = this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first) ? this->_tree.minValNode(this->_tree.get_root()) : this->_tree.get_leaf();
+				if (this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first))
+					node = this->_tree.minValNode(this->_tree.get_root());
+				else if (this->_cmp(this->_tree.maxValNode(this->_tree.get_root())->data_.first, k))
+					this->_tree.get_leaf();
+				else
+					node = this->_cmp(parent->data_.first, k) ? this->_tree.next(parent) : parent;
 				return (const_iterator(node, this->_tree.get_leaf()));
 			}
 			return (const_iterator(node, this->_tree.get_leaf()));
 		}
 
 	    iterator	upper_bound(const key_type& k) {
+			node_type	*parent = this->_tree.findParentNode(this->_tree.get_root(), k);
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
 			if (node == this->_tree.get_leaf()) {
-				node = this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first) ? this->_tree.minValNode(this->_tree.get_root()) : this->_tree.get_leaf();
+				if (this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first))
+					node = this->_tree.minValNode(this->_tree.get_root());
+				else if (this->_cmp(this->_tree.maxValNode(this->_tree.get_root())->data_.first, k))
+					this->_tree.get_leaf();
+				else
+					node = this->_cmp(parent->data_.first, k) ? this->_tree.next(parent) : parent;
 				return (iterator(node, this->_tree.get_leaf()));
 			}
 			node = node == this->_tree.maxValNode(this->_tree.get_root()) ? this->_tree.get_leaf() : this->_tree.next(node);
@@ -279,9 +311,15 @@ namespace ft {
 		}
 		
 		const_iterator	upper_bound(const key_type& k) const {
+			node_type	*parent = this->_tree.findParentNode(this->_tree.get_root(), k);
 			node_type	*node = this->_tree.findNode(this->_tree.get_root(), k);
 			if (node == this->_tree.get_leaf()) {
-				node = this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first) ? this->_tree.minValNode(this->_tree.get_root()) : this->_tree.get_leaf();
+				if (this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first))
+					node = this->_tree.minValNode(this->_tree.get_root());
+				else if (this->_cmp(this->_tree.maxValNode(this->_tree.get_root())->data_.first, k))
+					this->_tree.get_leaf();
+				else
+					node = this->_cmp(parent->data_.first, k) ? this->_tree.next(parent) : parent;
 				return (const_iterator(node, this->_tree.get_leaf()));
 			}
 			node = node == this->_tree.maxValNode(this->_tree.get_root()) ? this->_tree.get_leaf() : this->_tree.next(node);
@@ -301,6 +339,40 @@ namespace ft {
 		}
 		
 	};
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator==(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
+		if (lhs.size() != rhs.size())
+			return (false);
+		if (!ft::equal(lhs.begin(), lhs.end(), rhs.begin()))
+			return (false);
+		return (true);
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator!=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
+		return (!(lhs == rhs));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator>(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator<=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
+		return (!(rhs < lhs));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator<(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
+		return (rhs > lhs);
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator>=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
+		return (!(lhs < rhs));
+	}
 
 }
 

@@ -6,14 +6,13 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/26 20:52:46 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/29 16:24:12 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RBTREE_HPP
 # define RBTREE_HPP
 
-#include "iterator.hpp"
 #include "Node.h"
 #include <memory>
 #include <iostream>
@@ -33,7 +32,7 @@ namespace ft {
 		typedef ft::pair<const Key, T>								value_type;
 		typedef Compare												key_compare;
 		typedef std::allocator<ft::pair<const Key,T> >				allocator_type;
-		typedef std::allocator<ft::Node<Key,T> >				node_allocator_type;
+		typedef std::allocator<ft::Node<Key,T> >					node_allocator_type;
 		typedef int													difference_type;
 		typedef size_t												size_type;
 
@@ -223,7 +222,8 @@ namespace ft {
 				uncle->color_ = false;
 				if (node->parent_->parent_ != this->_root) {
 					node->parent_->parent_->color_ = true;
-					return (balanceInsertRB(node->parent_->parent_));
+					this->balanceInsertRB(node->parent_->parent_);
+					return (node);
 				}
 			}
 			else {
