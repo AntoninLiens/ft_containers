@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/31 18:21:21 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/31 18:38:13 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,9 +230,9 @@ namespace ft {
 	class map_iterator {
 	public:
 		typedef	Node		node_type;
-		typedef node_type *	pointer;
-		typedef node_type &	reference;
 		typedef T			value_type;
+		typedef value_type*	pointer;
+		typedef value_type&	reference;
 		typedef ptrdiff_t	difference_type;
 
 	/******************************************_CONST_OPERATOR_******************************************/
@@ -245,7 +245,7 @@ namespace ft {
 
 		map_iterator(void) : _node(NULL), _leaf(NULL) {}
 
-		map_iterator(pointer node, pointer leaf) : _node(node), _leaf(leaf) {}
+		map_iterator(Node	*node, Node	*leaf) : _node(node), _leaf(leaf) {}
 
 		map_iterator(const map_iterator<T, Node>& it) : _node(it.get_node()), _leaf(it.get_leaf()) {}
 
@@ -263,11 +263,11 @@ namespace ft {
 
 	/******************************************_GET_NODE_******************************************/
 
-		pointer	get_node(void) const {
+		Node	*get_node(void) const {
 			return (this->_node);
 		}
 		
-		pointer	get_leaf(void) const {
+		Node	*get_leaf(void) const {
 			return (this->_leaf);
 		}
 
@@ -290,7 +290,7 @@ namespace ft {
 
 		map_iterator	operator++(int n) {
 			static_cast<void>(n);
-			pointer	tmp = this->_node;
+			Node	*tmp = this->_node;
 			this->_node = this->next(this->_node);
 			return (map_iterator(tmp, this->_leaf));
 		}
@@ -302,7 +302,7 @@ namespace ft {
 
 		map_iterator	operator--(int n) {
 			static_cast<void>(n);
-			pointer	tmp = this->_node;
+			Node	*tmp = this->_node;
 			this->_node = this->prev(this->_node);
 			return (map_iterator(tmp, this->_leaf));
 		}
@@ -362,8 +362,8 @@ namespace ft {
 		}
 
 	private:
-		pointer	_node;
-		pointer	_leaf;
+		Node	*_node;
+		Node	*_leaf;
 
 	};
 
@@ -411,7 +411,6 @@ namespace ft {
 	/******************************************_DESTRUCTOR_******************************************/
 
 		~reverse_iterator(void) {}
-
 
 	/******************************************_GET_PTR_******************************************/
 
