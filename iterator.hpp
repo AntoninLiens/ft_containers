@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/28 18:34:26 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/31 18:21:21 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -312,7 +312,7 @@ namespace ft {
 		void	aff_node(node_type *node) const {
 			std::string	color;
 			node->color_ ? color = "red" : color = "black";			
-			std::cout << node->data_.first << " | " << node->data_.second << " | " << color << std::endl;
+			std::cout << node->data_.first << " | " << node->data_.second << " | " << color;
 		}
 
 		node_type	*next(node_type *node) const {
@@ -350,13 +350,13 @@ namespace ft {
 		}
 
 		node_type	*maxValNode(node_type *node) const {
-			if (node != this->_leaf && node->right_ != this->_leaf)
+			if (node && node != this->_leaf && node->right_ != this->_leaf)
 				node = this->maxValNode(node->right_);
 			return (node);
 		}
 
 		node_type	*minValNode(node_type *node) const {
-			if (node != this->_leaf && node->left_ != this->_leaf)
+			if (node && node != this->_leaf && node->left_ != this->_leaf)
 				node = this->minValNode(node->left_);
 			return (node);
 		}
@@ -370,13 +370,13 @@ namespace ft {
 	/******************************************_NON_MEMBER_FUNCTIONS_OVERLOAD_******************************************/
 
 	template<class Key1, class T1, class Key2, class T2>
-	bool operator==(const map_iterator<Key1, T1>& lhs, const map_iterator<Key2, T2>& rhs) {
+	bool operator==(ft::map_iterator<Key1, T1> const & lhs, ft::map_iterator<Key2, T2> const & rhs) {
 		return (lhs.get_node() == rhs.get_node());
-	}
+	}		
 
 	template<class Key1, class T1, class Key2, class T2>
-	bool operator!=(const map_iterator<Key1, T1>& lhs, const map_iterator<Key2, T2>& rhs) {
-		return (lhs.get_node() != rhs.get_node());
+	bool operator!=(ft::map_iterator<Key1, T1> const & lhs, ft::map_iterator<Key2, T2> const & rhs) {
+		return (!(lhs == rhs));
 	}
 
 	/*************************************************************************************************

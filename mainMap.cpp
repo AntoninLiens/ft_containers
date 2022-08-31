@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 17:38:30 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/26 18:21:32 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/31 18:14:54 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,13 +94,14 @@ int main(void) {
 	map2.aff_tree();
 
 	std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
-	
+
 	ft::map<int, char>::iterator	it2 = map2.end();
 	map2.erase(1);
 	map2.erase(0);
 	// map2.erase(9);
 	map2.aff_tree();
 
+	std::cout << (--map2.end())->second << std::endl;
 	
 	for (ft::map<int, char>::iterator it = map2.begin(); it2 != it; --it2)
 		std::cout << it2->first << " | " << it2->second << std::endl;

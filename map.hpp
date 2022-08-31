@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/28 18:55:13 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/31 18:17:13 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,23 +63,22 @@ namespace ft {
 		allocator_type		_alloc;
 		key_compare			_cmp;
 		ft::RBTree<Key, T>	_tree;
-		size_type			_size;
 
 	public:
 
 	/******************************************_CONSTRUCTORS_******************************************/
 
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()), _size(0) {}
+		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()) {}
 
 		template <class InputIterator>
   		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()), _size(0) {
+		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()) {
 			this->insert(first, last);
 		}
 
 		map(const map& x)
-		: _alloc(x.get_allocator()), _cmp(x.key_comp()), _tree(ft::RBTree<Key, T>()), _size(x.size()) {
+		: _alloc(x.get_allocator()), _cmp(x.key_comp()), _tree(ft::RBTree<Key, T>()) {
 			for (const_iterator begin = x.begin(), end = x.end(); begin != end; begin++)
 				this->_tree.insertNode(this->_tree.get_root(), *begin);
 		}
@@ -94,7 +93,6 @@ namespace ft {
 			this->clear();
 			this->_alloc = x.get_allocator();
 			this->_cmp = this->key_comp();
-			this->_size = x.size();
 			for (const_iterator begin = x.begin(), end = x.end(); begin != end; begin++)
 				this->_tree.insertNode(this->_tree.get_root(), *begin);
 			return (*this);
@@ -137,29 +135,29 @@ namespace ft {
 		}
 
 		reverse_iterator	rbegin(void) {
-			return (reverse_iterator(this->end()));
+			return (reverse_iterator(this->begin()));
 		}
 		
 		const_reverse_iterator	rbegin(void) const {
-			return (const_reverse_iterator(this->end()));
+			return (const_reverse_iterator(this->begin()));
 		}
 
       	reverse_iterator	rend(void) {
-			  return (reverse_iterator(this->begin()));
+			  return (reverse_iterator(this->end()));
 		}
 		
 		const_reverse_iterator	rend(void) const {
-			return (const_reverse_iterator(this->begin()));
+			return (const_reverse_iterator(this->end()));
 		}
 
 	/******************************************_CAPACITY_******************************************/
 
 		bool	empty(void) const {
-			return (this->_size ? false : true);
+			return (this->_tree.get_size() ? false : true);
 		}
 
 		size_type	size(void) const {
-			return (this->_size);
+			return (this->_tree.get_size());
 		}
 
 		size_type	max_size(void) const {
@@ -178,16 +176,12 @@ namespace ft {
 			iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), val), this->_tree.get_leaf());
 			bool	b2o = inserted.get_node()->temp_ ? false : true;
 			inserted.get_node()->temp_ = false;
-			if (b2o)
-				this->_size++;
 			return (ft::make_pair(inserted, b2o));
 		}
 		
 		iterator	insert(iterator position, const value_type& val) {
 			static_cast<void>(position);
 			iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), val), this->_tree.get_leaf());
-			if (!inserted.get_node()->temp_)
-				this->_size++;
 			inserted.get_node()->temp_ = false;
 			return (inserted);
 		}
@@ -196,8 +190,6 @@ namespace ft {
 		void	insert(InputIterator first, InputIterator last) {
 			for (; first != last; first++) {
 				iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), *first), this->_tree.get_leaf());
-				if (!inserted.get_node()->temp_)
-					this->_size++;
 				inserted.get_node()->temp_ = false;
 			}
 		}
@@ -209,7 +201,6 @@ namespace ft {
 		size_type	erase(const key_type& k) {
 			if (this->_tree.deleteNode(this->_tree.get_root(), k) == this->_tree.get_leaf())
 				return (0);
-			this->_size--;
 			return (1);
 		}
 	    
@@ -231,11 +222,12 @@ namespace ft {
 			}
 		}
 
-		void	swap(map& x);
+		void	swap(map& x) {
+			this->_tree.swap(x._tree);
+		}
 
 		void	clear(void) {
 			this->_tree.set_root(this->_tree.destroyRBTree(this->_tree.get_root()));
-			this->_size = 0;
 		}
 
 	/******************************************_OBSERVERS_******************************************/
@@ -355,23 +347,28 @@ namespace ft {
 	}
 
 	template <class Key, class T, class Compare, class Alloc>
-	bool operator>(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
-		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	bool	operator<(const map<Key, T, Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
+		return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 	}
 
 	template <class Key, class T, class Compare, class Alloc>
-	bool operator<=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
+	bool	operator<=(const map<Key, T, Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
 		return (!(rhs < lhs));
 	}
 
 	template <class Key, class T, class Compare, class Alloc>
-	bool operator<(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
-		return (rhs > lhs);
+	bool	operator>(const map<Key, T, Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
+		return (rhs < lhs);
 	}
 
 	template <class Key, class T, class Compare, class Alloc>
-	bool operator>=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
+	bool	operator>=(const map<Key, T, Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
 		return (!(lhs < rhs));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	void	swap(map<Key,T,Compare,Alloc>& x, map<Key,T,Compare,Alloc>& y) {
+		x.swap(y);
 	}
 
 }

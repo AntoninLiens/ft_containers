@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/29 16:24:12 by aliens           ###   ########.fr       */
+/*   Updated: 2022/08/31 16:43:49 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ namespace ft {
 	/******************************************_CONSTRUCTORS_******************************************/
 
 		RBTree(const key_compare& cmp = key_compare(), const allocator_type& alloc = allocator_type(), const node_allocator_type& node_alloc = node_allocator_type())
-		: _cmp(cmp), _alloc(alloc), _node_alloc(node_alloc) {
+		: _cmp(cmp), _alloc(alloc), _node_alloc(node_alloc), _size(0) {
 			this->_leaf = this->_node_alloc.allocate(1);
 			this->_alloc.construct(&this->_leaf->data_, value_type());
 			this->_leaf->left_ = NULL;
@@ -77,6 +77,10 @@ namespace ft {
 		node_allocator_type	get_node_alloc(void) const {
 			return (this->_node_alloc);
 		}
+
+		size_t	get_size(void) const {
+			return (this->_size);
+		}
 		
 	/******************************************_SETTERS_******************************************/
 
@@ -84,11 +88,21 @@ namespace ft {
 			this->_root = node;
 		}
 
+		void	set_leaf(node_type *node) {
+			this->_leaf = node;
+		}
+
+		void	set_size(size_t size) {
+			this->_size = size;
+		}
+
 	/******************************************_MODIFIERS_******************************************/
 
 		node_type	*insertNode(node_type *node, value_type data) {
-			if (this->_root == this->_leaf)
+			if (this->_root == this->_leaf) {
+				this->_size = 1;
 				return (this->_root = newNode(data, false, false));
+			}
 			node_type	*parent = this->findParentNode(this->_root, data.first);
 			if (this->_cmp(data.first, parent->data_.first)) {
 				node = this->newNode(data, true, false);
@@ -104,6 +118,7 @@ namespace ft {
 				parent->temp_ = true;
 				return (parent);
 			}
+			this->_size++;
 			return (this->balanceInsertRB(node));
 		}
 
@@ -111,6 +126,7 @@ namespace ft {
 			node = this->findNode(this->_root, key);
 			if (node == this->_leaf)
 				return (node);
+			this->_size--;
 			if (node->left_ == this->_leaf && node->right_ == this->_leaf) {
 				if (node == this->_root) {
 					this->_alloc.destroy(&node->data_);
@@ -209,6 +225,20 @@ namespace ft {
 			return (parent);
 		}
 
+		void	swap(RBTree &tree) {
+			node_type	*tmp_root = this->_root;
+			node_type	*tmp_leaf = this->_leaf;
+			size_t		tmp_size = this->_size;
+
+			this->_root = tree.get_root();
+			this->_leaf = tree.get_leaf();
+			this->_size = tree.get_size();
+
+			tree.set_root(tmp_root);
+			tree.set_leaf(tmp_leaf);
+			tree.set_size(tmp_size);
+		}
+
 	/******************************************_BALANCE_******************************************/
 
 		node_type	*balanceInsertRB(node_type *node) {
@@ -223,7 +253,6 @@ namespace ft {
 				if (node->parent_->parent_ != this->_root) {
 					node->parent_->parent_->color_ = true;
 					this->balanceInsertRB(node->parent_->parent_);
-					return (node);
 				}
 			}
 			else {
@@ -385,6 +414,7 @@ namespace ft {
 				this->_alloc.destroy(&node->data_);
 				this->_node_alloc.deallocate(node, 1);
 			}
+			this->_size = 0;
 			return (this->_leaf);
 		}
 		
@@ -479,6 +509,7 @@ namespace ft {
 		key_compare			_cmp;
 		allocator_type		_alloc;
 		node_allocator_type	_node_alloc;
+		size_t				_size;
 
 	};
 }
