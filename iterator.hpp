@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/31 18:38:13 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/02 18:49:58 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 #include <cstddef>
 #include <iostream>
-#include "Node.h"
+#include "node.h"
 #include "iterator_compare.hpp"
 
 namespace ft {

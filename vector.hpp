@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:51:46 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/04 19:30:08 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/02 17:11:51 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #define VECTOR_HPP
 
 #include "iterator.hpp"
-#include "utils.hpp"
+#include "iterator_check.hpp"
 #include <memory>
 #include <stdexcept>
 #include <cstddef>

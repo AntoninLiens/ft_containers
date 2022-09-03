@@ -6,14 +6,14 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/31 16:43:49 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/03 18:43:20 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RBTREE_HPP
 # define RBTREE_HPP
 
-#include "Node.h"
+#include "node.h"
 #include <memory>
 #include <iostream>
 
@@ -237,6 +237,14 @@ namespace ft {
 			tree.set_root(tmp_root);
 			tree.set_leaf(tmp_leaf);
 			tree.set_size(tmp_size);
+		}
+
+		node_type	*size_node(void) {
+			if (this->_size_node) {
+				this->_alloc.destroy(&this->_size_node->data_);
+				this->_node_alloc.deallocate(this->_size_node, 1);
+			}
+			return (this->_size_node = this->newNode(ft::make_pair(this->_size, mapped_type()), false, false));
 		}
 
 	/******************************************_BALANCE_******************************************/

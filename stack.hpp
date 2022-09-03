@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/26 13:55:18 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/04 20:23:39 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/02 17:20:57 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 # define STACK_HPP
 
 #include "vector.hpp"
+#include "iterator.hpp"
+#include "iterator_check.hpp"
+#include <memory>
+#include <stdexcept>
+#include <cstddef>
 
 namespace ft {
 

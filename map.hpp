@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/08/31 18:40:39 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/03 18:43:42 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "pair.hpp"
 #include "RBTree.hpp"
 #include "iterator.hpp"
+#include "iterator_check.hpp"
 
 namespace ft {
 
@@ -64,15 +65,23 @@ namespace ft {
 		key_compare			_cmp;
 		ft::RBTree<Key, T>	_tree;
 
+		
 	public:
 
+		void	aff_node(node_type *node) const {
+			this->_tree.aff_node(node);
+		}
+
+		void	aff_tree(void) const {
+			this->_tree.aff_tree(this->_tree.get_root(), 0);
+		}
 	/******************************************_CONSTRUCTORS_******************************************/
 
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()) {}
 
 		template <class InputIterator>
-  		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+  		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)
 		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()) {
 			this->insert(first, last);
 		}
@@ -102,18 +111,6 @@ namespace ft {
 
 		allocator_type	get_allocator() const {
 			return (this->_alloc);
-		}
-
-		ft::RBTree<Key, T>	get_tree() const {
-			return (this->_tree);
-		}
-
-		void	aff_node(node_type *node) const {
-			this->_tree.aff_node(node);
-		}
-
-		void	aff_tree(void) const {
-			this->_tree.aff_tree(this->_tree.get_root(), 0);
 		}
 
 	/******************************************_ITERATORS_******************************************/
@@ -187,7 +184,7 @@ namespace ft {
 		}
 		
 		template <class InputIterator>
-		void	insert(InputIterator first, InputIterator last) {
+		void	insert(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL) {
 			for (; first != last; first++) {
 				iterator	inserted(this->_tree.insertNode(this->_tree.get_root(), *first), this->_tree.get_leaf());
 				inserted.get_node()->temp_ = false;
@@ -205,21 +202,8 @@ namespace ft {
 		}
 	    
 		void	erase(iterator first, iterator last) {
-			while (first != last) {
-				node_type	*max = this->_tree.maxValNode(this->_tree.get_root());
-				node_type	*min = this->_tree.minValNode(this->_tree.get_root());
-				node_type	*tmp = this->_tree.get_leaf();
-				while (min != max) {
-					if (min->data_.first == first->first)
-						tmp = this->_tree.next(min);
-					min = this->_tree.next(min);
-				}
-				if (max->data_.first == first->first)
-					tmp = this->_tree.get_leaf();	
-				this->erase(first->first);
-				iterator tmp2(tmp, this->_tree.get_leaf());
-				first = tmp2;
-			}
+			while (first != last)
+				this->erase(first++);
 		}
 
 		void	swap(map& x) {
@@ -263,7 +247,7 @@ namespace ft {
 				if (this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first))
 					node = this->_tree.minValNode(this->_tree.get_root());
 				else if (this->_cmp(this->_tree.maxValNode(this->_tree.get_root())->data_.first, k))
-					this->_tree.get_leaf();
+					node = this->_tree.get_leaf();
 				else
 					node = this->_cmp(parent->data_.first, k) ? this->_tree.next(parent) : parent;
 				return (iterator(node, this->_tree.get_leaf()));
@@ -278,7 +262,7 @@ namespace ft {
 				if (this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first))
 					node = this->_tree.minValNode(this->_tree.get_root());
 				else if (this->_cmp(this->_tree.maxValNode(this->_tree.get_root())->data_.first, k))
-					this->_tree.get_leaf();
+					node = this->_tree.get_leaf();
 				else
 					node = this->_cmp(parent->data_.first, k) ? this->_tree.next(parent) : parent;
 				return (const_iterator(node, this->_tree.get_leaf()));
@@ -293,7 +277,7 @@ namespace ft {
 				if (this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first))
 					node = this->_tree.minValNode(this->_tree.get_root());
 				else if (this->_cmp(this->_tree.maxValNode(this->_tree.get_root())->data_.first, k))
-					this->_tree.get_leaf();
+					node = this->_tree.get_leaf();
 				else
 					node = this->_cmp(parent->data_.first, k) ? this->_tree.next(parent) : parent;
 				return (iterator(node, this->_tree.get_leaf()));
@@ -309,7 +293,7 @@ namespace ft {
 				if (this->_cmp(k, this->_tree.minValNode(this->_tree.get_root())->data_.first))
 					node = this->_tree.minValNode(this->_tree.get_root());
 				else if (this->_cmp(this->_tree.maxValNode(this->_tree.get_root())->data_.first, k))
-					this->_tree.get_leaf();
+					node = this->_tree.get_leaf();
 				else
 					node = this->_cmp(parent->data_.first, k) ? this->_tree.next(parent) : parent;
 				return (const_iterator(node, this->_tree.get_leaf()));
