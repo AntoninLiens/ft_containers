@@ -6,13 +6,14 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/03 18:43:20 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/04 18:08:16 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RBTREE_HPP
 # define RBTREE_HPP
 
+#include "compare.hpp"
 #include "node.h"
 #include <memory>
 #include <iostream>
@@ -23,7 +24,7 @@ namespace ft {
 												RED_BLACK_TREE
 	**************************************************************************************************/
 
-	template <class Key, class T, class Compare = std::less<Key> >
+	template <class Key, class T, class Compare = ft::less<Key> >
 	class RBTree {
 	public:
 		typedef Key													key_type;

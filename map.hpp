@@ -6,14 +6,13 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/03 18:43:42 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/04 18:08:46 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 # define MAP_HPP
 
-#include "pair.hpp"
 #include "RBTree.hpp"
 #include "iterator.hpp"
 #include "iterator_check.hpp"
@@ -24,7 +23,7 @@ namespace ft {
 													MAP
 	**************************************************************************************************/
 	
-	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
+	template <class Key, class T, class Compare = ft::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
 	class map {
 	public:
 		typedef	ft::Node<Key, T>										node_type;
