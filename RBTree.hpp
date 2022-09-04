@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/04 19:41:01 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/05 00:19:17 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ namespace ft {
 		RBTree(const key_compare& cmp = key_compare(), const allocator_type& alloc = allocator_type(), const node_allocator_type& node_alloc = node_allocator_type())
 		: _cmp(cmp), _alloc(alloc), _node_alloc(node_alloc), _size(0) {
 			this->_leaf = this->_node_alloc.allocate(1);
-			this->_alloc.construct(&this->_leaf->data_, ft::make_pair(this->_size, mapped_type()));
+			this->_alloc.construct(&this->_leaf->data_, ft::make_pair(static_cast<Key>(this->_size), mapped_type()));
 			this->_leaf->left_ = NULL;
 			this->_leaf->right_ = NULL;
 			this->_leaf->parent_ = NULL;
@@ -430,6 +430,8 @@ namespace ft {
 				this->_node_alloc.deallocate(node, 1);
 			}
 			this->_size = 0;
+			this->_alloc.destroy(&this->_leaf->data_);
+			this->_alloc.construct(&this->_leaf->data_, ft::make_pair(this->_size, mapped_type()));
 			return (this->_leaf);
 		}
 		
