@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/02 16:08:43 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/03 18:14:54 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/04 18:34:16 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,12 @@
 #include "stack.hpp"
 #include "map.hpp"
 #include <iostream>
+#include <math.h>
 
 int main ()
 {
 	{
-		std::cout << "MAP :" << std::endl << std::endl;
+		std::cout << "MAP :" << std::endl;
 
 		ft::map<int, std::string>	map2;
 		for (size_t i = 0; i < 5; i++)
@@ -30,31 +31,33 @@ int main ()
 		++itmodif;
 		(*itmodif).second = "yop";
 		
-		std::cout << "constructors" << std::endl;
 		ft::map<int, std::string>	map_default;
 		ft::map<int, std::string>	map_range(map2.begin(), map2.end());
 		ft::map<int, std::string>	map_copy(map_range);
 		ft::map<int, std::string>	map_assigned;
 		map_assigned = map_copy;
 
-		std::cout << "map_default :" << std::endl << std::endl << "size : " << map_default.size() << std::endl << "max_size : " << map_default.max_size() << std::endl;
-		std::cout << "content of map_default : " << std::endl;
+		std::cout << "map_default :" << std::endl << "size : " << map_default.size() << std::endl << "max_size : " << map_default.max_size() << std::endl;
+		std::cout << "map_default.empty() : " << map_default.empty() << std::endl;
+
+		std::cout << std::endl << "map_assigned :" << std::endl << "size : " << map_assigned.size() << std::endl << "max_size : " << map_assigned.max_size() << std::endl;
+		std::cout << "content of map_assigned : " << std::endl;
 		for (ft::map<int, std::string>::const_iterator	it = map_assigned.begin(); it != map_assigned.end(); it++)
 			std::cout << "[ " << (*it).first << " ][ " << (*it).second << " ]" << std::endl;
+		std::cout << "map_assigned.empty() : " << map_assigned.empty() << std::endl;
+		std::cout << "map_copy.empty() : " << map_copy.empty() << std::endl;
 
-		std::cout << std::endl << "map_range :" << std::endl << std::endl << "size : " << map_range.size() << std::endl << "max_size : " << map_range.max_size() << std::endl;
+		std::cout << std::endl << "map_range :" << std::endl << "size : " << map_range.size() << std::endl << "max_size : " << map_range.max_size() << std::endl;
 		std::cout << "content of map_range : " << std::endl;
 		std::cout << "reverse content of map_range :" <<std::endl;
 		for (ft::map<int, std::string>::const_reverse_iterator it = map_range.rbegin(); it != map_range.rend(); it++)
 			std::cout << "[ " << (*it).first << " ][ " << (*it).second << " ]" << std::endl;
-
-		std::cout << std::endl << "map_default.empty() : " << map_default.empty() << std::endl;
-		std::cout << "map_range.empty() : " << map_range.empty() << std::endl;
-		std::cout << "map_copy.empty() : " << map_copy.empty() << std::endl << std::endl;
+		std::cout << "map_range.empty() : " << map_range.empty() << std::endl << std::endl;
+	
 	}
-		//////////////////////////////////////////////
+
 	{
-		std::cout << "element access :" << std::endl << std::endl;
+		std::cout << "element access :" << std::endl;
 
 		ft::map<int, char>	map2;
 		map2[-55] = 's';
@@ -104,19 +107,55 @@ int main ()
 		for (ft::map<int, char>::const_iterator	it = map.begin(); it != map.end(); it++)
 			std::cout << "[ " << (*it).first << " ][ " << (*it).second << " ]" << std::endl;
 
+		std::cout << std::endl;
 		map2[5] = 'j';
 
 		std::cout << "map == map2 ? " << (map == map2) << std::endl;
 		std::cout << "map != map2 ? " << (map != map2) << std::endl;
 		std::cout << "map > map2 ? " << (map > map2) << std::endl;
 		std::cout << "map < map2 ? " << (map < map2) << std::endl;
-
 		std::cout << "map == map ? " << (map == map) << std::endl;
 		std::cout << "map != map ? " << (map != map) << std::endl;
 		std::cout << "map <= map ? " << (map <= map) << std::endl;
 		std::cout << "map >= map ? " << (map >= map) << std::endl;
 		std::cout << "map < map ? " << (map < map) << std::endl;
-		std::cout << "map > map ? " << (map > map) << std::endl;
+		std::cout << "map > map ? " << (map > map) << std::endl << std::endl;
 	}
+
+	std::cout << "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" << std::endl << std::endl;
+
+	{
+		std::cout << "Stack :" << std::endl;
+		ft::stack<int, ft::vector<int> > s1, s2;
+
+		for (size_t i = 0; i < 10; i++) {
+			s1.push(pow(-1, i) * i);
+			s2.push(i);
+		}
+
+		s2.pop();
+		
+		std::cout << "s1 == s2 : " << (s1 == s2) << std::endl;
+		std::cout << "s1 != s2 : " << (s1 != s2) << std::endl;
+		std::cout << "s1 < s2 : " << (s1 < s2) << std::endl;
+		std::cout << "s1 <= s2 : " << (s1 <= s2) << std::endl;
+		std::cout << "s1 > s2 : " << (s1 > s2) << std::endl;
+		std::cout << "s1 >= s2 : " << (s1 >= s2) << std::endl << std::endl;
+
+		std::cout << "size of s1 : " << s1.size() << std::endl;
+		std::cout << "content of s1 : " << std::endl;
+		while (!(s1.empty())) {
+			std::cout << "[ " << s1.top() << " ]" << std::endl;
+			s1.pop();
+		}
+
+		std::cout <<std::endl << "size of s2 : " << s2.size() << std::endl;
+		std::cout << "content of s2 : " << std::endl;
+		while (!(s2.empty())) {
+			std::cout << "[ " << s2.top() << " ]" << std::endl;
+			s2.pop();
+		}
+	}
+	
 	return 0;
 }
