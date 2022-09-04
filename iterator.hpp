@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/04 18:08:06 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/04 19:42:51 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -316,7 +316,11 @@ namespace ft {
 		}
 
 		node_type	*next(node_type *node) const {
-			node_type	*tmp;
+			node_type	*tmp = node;
+			while (tmp->parent_)
+				tmp = tmp->parent_;
+			if (node == this->_leaf)
+				return (this->maxValNode(tmp));
 			if (node->right_ == this->_leaf) {
 				tmp = node;
 				while (tmp->parent_ && tmp == tmp->parent_->right_)
@@ -331,7 +335,7 @@ namespace ft {
 		}
 
 		node_type	*prev(node_type *node) const {
-			node_type	*tmp = this->_node;
+			node_type	*tmp = node;
 			while (tmp->parent_)
 				tmp = tmp->parent_;
 			if (node == this->_leaf)

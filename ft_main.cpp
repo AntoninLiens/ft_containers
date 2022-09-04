@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/02 16:08:43 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/04 18:34:16 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/04 19:46:12 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int main ()
 		
 		ft::map<int, std::string>	map_default;
 		ft::map<int, std::string>	map_range(map2.begin(), map2.end());
+		std::cout << " coucou" << std::endl;
 		ft::map<int, std::string>	map_copy(map_range);
 		ft::map<int, std::string>	map_assigned;
 		map_assigned = map_copy;
@@ -74,6 +75,7 @@ int main ()
 		std::cout << "map[33] = 'y'" << std::endl;
 		map[33] = 'y';
 		std::cout << "map.count(33) = " << map.count(33) << std::endl << std::endl;
+
 
 		std::cout << "map.insert(map2.begin(), map2.end())" << std::endl;
 		map.insert(map2.begin(), map2.end());

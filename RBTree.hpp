@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:17:22 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/04 18:08:16 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/04 19:41:01 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ namespace ft {
 		RBTree(const key_compare& cmp = key_compare(), const allocator_type& alloc = allocator_type(), const node_allocator_type& node_alloc = node_allocator_type())
 		: _cmp(cmp), _alloc(alloc), _node_alloc(node_alloc), _size(0) {
 			this->_leaf = this->_node_alloc.allocate(1);
-			this->_alloc.construct(&this->_leaf->data_, value_type());
+			this->_alloc.construct(&this->_leaf->data_, ft::make_pair(this->_size, mapped_type()));
 			this->_leaf->left_ = NULL;
 			this->_leaf->right_ = NULL;
 			this->_leaf->parent_ = NULL;
@@ -102,6 +102,8 @@ namespace ft {
 		node_type	*insertNode(node_type *node, value_type data) {
 			if (this->_root == this->_leaf) {
 				this->_size = 1;
+				this->_alloc.destroy(&this->_leaf->data_);
+				this->_alloc.construct(&this->_leaf->data_, ft::make_pair(this->_size, mapped_type()));
 				return (this->_root = newNode(data, false, false));
 			}
 			node_type	*parent = this->findParentNode(this->_root, data.first);
@@ -120,6 +122,8 @@ namespace ft {
 				return (parent);
 			}
 			this->_size++;
+			this->_alloc.destroy(&this->_leaf->data_);
+			this->_alloc.construct(&this->_leaf->data_, ft::make_pair(this->_size, mapped_type()));
 			return (this->balanceInsertRB(node));
 		}
 
@@ -128,6 +132,8 @@ namespace ft {
 			if (node == this->_leaf)
 				return (node);
 			this->_size--;
+			this->_alloc.destroy(&this->_leaf->data_);
+			this->_alloc.construct(&this->_leaf->data_, ft::make_pair(this->_size, mapped_type()));
 			if (node->left_ == this->_leaf && node->right_ == this->_leaf) {
 				if (node == this->_root) {
 					this->_alloc.destroy(&node->data_);
