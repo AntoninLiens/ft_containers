@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:51:46 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/02 17:11:51 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/05 13:45:03 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -367,7 +367,6 @@ namespace ft {
 
 		void	swap(vector& vector) {
 			pointer	ptrTmp[3] = {this->_start, this->_end, this->_capacity};
-			Allocator	allocTmp = this->_alloc;
 			this->_start = vector._start;
 			this->_end = vector._end;
 			this->_capacity = vector._capacity;

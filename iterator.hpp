@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/04 19:42:51 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/05 16:38:48 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,6 @@ namespace ft {
 	struct bidirectional_iterator_tag : public forward_iterator_tag {};
 	struct random_access_iterator_tag : public bidirectional_iterator_tag {};
 
-	/*************************************************************************************************
-											RANDOM_ACCES_ITERATOR
-	**************************************************************************************************/
 
 	template <class Category, class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
 	struct iterator {
@@ -40,7 +37,7 @@ namespace ft {
 	};
 
 	template <class Iterator>
-	class iterator_traits {
+	struct iterator_traits {
 		typedef typename Iterator::value_type			value_type;
 		typedef typename Iterator::difference_type		difference_type;
 		typedef typename Iterator::pointer				pointer;
@@ -49,7 +46,7 @@ namespace ft {
 	};
 	
 	template <class T>
-	class iterator_traits<T*> {
+	struct iterator_traits<T*> {
 		typedef T							value_type;
 		typedef ptrdiff_t					difference_type;
 		typedef T*							pointer;
@@ -58,22 +55,27 @@ namespace ft {
 	};
 	
 	template <class T>
-	class iterator_traits<const T*> {
+	struct iterator_traits<const T*> {
 		typedef T							value_type;
 		typedef ptrdiff_t					difference_type;
 		typedef T*							pointer;
 		typedef T&							reference;
 		typedef random_access_iterator_tag	iterator_category;
 	};
+	
+	/*************************************************************************************************
+											RANDOM_ACCES_ITERATOR
+	**************************************************************************************************/
 
 	template <class T>
-	class random_access_iterator : public ft::iterator<random_access_iterator_tag, T> {
+	class random_access_iterator : public ft::iterator<ft::random_access_iterator_tag, T> {
 	public:
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type		value_type;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::pointer			pointer;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::reference			reference;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
+		typedef typename std::iterator_traits<T*>::value_type			value_type;
+		typedef typename std::iterator_traits<T*>::difference_type		difference_type;
+		typedef typename std::iterator_traits<T*>::pointer				pointer;
+		typedef typename std::iterator_traits<T*>::reference			reference;
+		typedef typename std::iterator_traits<T*>::iterator_category	iterator_category;
+
 
 	/******************************************_CONST_OPERATOR_******************************************/
 

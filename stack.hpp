@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/26 13:55:18 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/02 17:20:57 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/05 16:35:05 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,81 +35,92 @@ namespace ft {
 
 	/******************************************_CONSTRUCTOR_******************************************/
 
-	explicit stack(const container_type& container = container_type()) : _container(container) {}
-
-	/******************************************_GET_CONTAINER_******************************************/
-
-	container_type	get_container(void) const {
-		return (this->_container);
-	}
+	explicit stack(const container_type& container = container_type()) : c(container) {}
 
 	/******************************************_CAPACITY_******************************************/
 
 	bool empty(void) const {
-		return (this->_container.empty());
+		return (this->c.empty());
 	}
 
 
 	size_type size(void) const {
-		return (this->_container.size());
+		return (this->c.size());
 	}
 
 	/******************************************_ELEMENT_ACCES_******************************************/
 
 	value_type& top(void) {
-		return (this->_container.back());
+		return (this->c.back());
 	}
 
 	const value_type& top(void) const {
-		return (this->_container.back());
+		return (this->c.back());
 	}
 
 	/******************************************_MODIFIERS_******************************************/
 
 	void push (const value_type& val) {
-		this->_container.push_back(val);
+		this->c.push_back(val);
 	}
 
 
 	void pop(void) {
-		this->_container.pop_back();
+		this->c.pop_back();
 	}
 
-	private:
-		container_type	_container;
+	protected:
+		container_type	c;
 
+		template <class Type, class C>
+		friend bool operator==(const stack<Type, C>& lhs, const stack<Type, C>& rhs);
+
+		template <class Type, class C>
+		friend bool operator!=(const stack<Type, C>& lhs, const stack<Type, C>& rhs);
+
+		template <class Type, class C>
+		friend bool operator<(const stack<Type, C>& lhs, const stack<Type, C>& rhs);
+
+		template <class Type, class C>
+		friend bool operator<=(const stack<Type, C>& lhs, const stack<Type, C>& rhs);
+
+		template <class Type, class C>
+		friend bool operator>(const stack<Type, C>& lhs, const stack<Type, C>& rhs);
+
+		template <class Type, class C>
+		friend bool operator>=(const stack<Type, C>& lhs, const stack<Type, C>& rhs);
 	};
 
 	/******************************************_NON_MEMBER_FUNCTIONS_OVERLOAD_******************************************/
 	
 	template <class T, class Container>
   	bool operator==(const stack<T,Container>& lhs, const stack<T,Container>& rhs) {
-		return (lhs.get_container() == rhs.get_container());
+		return (lhs.c == rhs.c);
 	}
 
 	template <class T, class Container>
   	bool operator!=(const stack<T,Container>& lhs, const stack<T,Container>& rhs) {
-		return (lhs.get_container() != rhs.get_container());
+		return (lhs.c != rhs.c);
 	}
 	
 	template <class T, class Container>
   	bool operator<(const stack<T,Container>& lhs, const stack<T,Container>& rhs) {
-		return (lhs.get_container() < rhs.get_container());
+		return (lhs.c < rhs.c);
 	}
 
 	template <class T, class Container>
   	bool operator<=(const stack<T,Container>& lhs, const stack<T,Container>& rhs) {
-		return (lhs.get_container() <= rhs.get_container());
+		return (lhs.c <= rhs.c);
 	}
 
 	template <class T, class Container>
   	bool operator>(const stack<T,Container>& lhs, const stack<T,Container>& rhs) {
-		return (lhs.get_container() > rhs.get_container());
+		return (lhs.c > rhs.c);
 	}
 
 	template <class T, class Container>
   	bool operator>=(const stack<T,Container>& lhs, const stack<T,Container>& rhs) {
-		return (lhs.get_container() >= rhs.get_container());
+		return (lhs.c >= rhs.c);
 	}
 
 }

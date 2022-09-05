@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 17:49:23 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/04 19:36:24 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/05 16:25:39 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,9 @@ namespace ft {
 	
 		};
 		
-		allocator_type		_alloc;
-		key_compare			_cmp;
-		ft::RBTree<Key, T>	_tree;
-
-		
-	public:
+		allocator_type					_alloc;
+		key_compare						_cmp;
+		ft::RBTree<Key, T, key_compare>	_tree;
 
 		void	aff_node(node_type *node) const {
 			this->_tree.aff_node(node);
@@ -74,19 +71,21 @@ namespace ft {
 		void	aff_tree(void) const {
 			this->_tree.aff_tree(this->_tree.get_root(), 0);
 		}
+		
+	public:
 	/******************************************_CONSTRUCTORS_******************************************/
 
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()) {}
+		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T, key_compare>()) {}
 
 		template <class InputIterator>
   		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)
-		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T>()) {
+		: _alloc(alloc), _cmp(comp), _tree(ft::RBTree<Key, T, key_compare>()) {
 			this->insert(first, last);
 		}
 
 		map(const map& x)
-		: _alloc(x.get_allocator()), _cmp(x.key_comp()), _tree(ft::RBTree<Key, T>()) {
+		: _alloc(x.get_allocator()), _cmp(x.key_comp()), _tree(ft::RBTree<Key, T, key_compare>()) {
 			for (const_iterator begin = x.begin(), end = x.end(); begin != end; begin++)
 				this->_tree.insertNode(this->_tree.get_root(), *begin);
 		}

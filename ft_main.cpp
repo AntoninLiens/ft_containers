@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/02 16:08:43 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/05 00:19:44 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/05 16:36:07 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,11 +192,6 @@ int main ()
 			std::cout << "reverse content of v :" << std::endl;
 			for (ft::vector<int>::reverse_iterator it1 = v.rbegin(), it2 = v.rend(); it1 < it2; it1++)
 				std::cout << *it1 << std::endl;
-
-			std::sort(v.begin(), v.end());
-			std::cout << std::endl << "std::sort :" << std::endl;
-			for (size_t i = 0; i < v.size(); i++)
-				std::cout << v[i] << std::endl;
 		}
 
 		{
