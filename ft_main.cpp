@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/02 16:08:43 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/06 13:42:43 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/06 15:10:47 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,6 @@ int main ()
 			for (ft::map<int, std::string>::const_reverse_iterator it = map_range.rbegin(); it != map_range.rend(); it++)
 				std::cout << "[ " << (*it).first << " ][ " << (*it).second << " ]" << std::endl;
 			std::cout << "map_range.empty() : " << map_range.empty() << std::endl << std::endl;
-
-			// std::sort(map2.begin(), map2.end());
-			// std::cout << std::endl << "sort map2 :" << std::endl;
-			// std::cout << std::endl << "content of map2 :" << std::endl;
-			// for (ft::map<int, std::string>::const_iterator it1 = map2.begin(), it2 = map2.end(); it1 != it2; it1++)
-			// 	std::cout << "[ " << it1->first << " ][ " << it1->second << " ]" << std::endl;
-
 		}
 
 		{
@@ -197,12 +190,6 @@ int main ()
 
 			std::cout << std::endl << "reverse content of v :" << std::endl;
 			for (ft::vector<int>::reverse_iterator it1 = v.rbegin(), it2 = v.rend(); it1 < it2; it1++)
-				std::cout << *it1 << std::endl;
-
-			std::sort(v.begin(), v.end());
-			std::cout << std::endl << "sort v :" << std::endl;
-			std::cout << std::endl << "content of v :" << std::endl;
-			for (ft::vector<int>::const_iterator it1 = v.begin(), it2 = v.end(); it1 < it2; it1++)
 				std::cout << *it1 << std::endl;
 		}
 

@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:51:46 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/05 13:45:03 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/06 15:34:40 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,11 +98,7 @@ namespace ft {
 
 		vector& operator=(const vector& vector) {
 			this->clear();
-			this->_start = this->_alloc.allocate(vector.capacity());
-			this->_capacity = this->_start + vector.capacity();
-			this->_end = this->_start;
-			for (size_type i = 0; i < vector.size(); i++)
-				this->_alloc.construct(this->_end++, vector[i]);
+			this->assign(vector.begin(), vector.end());
 			return (*this);
 		}
 
@@ -378,8 +374,6 @@ namespace ft {
 		void	clear(void) {
 			while (this->_end != this->_start)
 				this->_alloc.destroy(this->_end--);
-			this->_start = NULL;
-			this->_end = NULL;
 		}
 
 	private:
