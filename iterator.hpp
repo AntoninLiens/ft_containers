@@ -6,7 +6,7 @@
 /*   By: aliens <aliens@student.s19.be>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 16:20:53 by aliens            #+#    #+#             */
-/*   Updated: 2022/09/05 16:38:48 by aliens           ###   ########.fr       */
+/*   Updated: 2022/09/06 01:33:20 by aliens           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,11 @@ namespace ft {
 	template <class T>
 	class random_access_iterator : public ft::iterator<ft::random_access_iterator_tag, T> {
 	public:
-		typedef typename std::iterator_traits<T*>::value_type			value_type;
-		typedef typename std::iterator_traits<T*>::difference_type		difference_type;
-		typedef typename std::iterator_traits<T*>::pointer				pointer;
-		typedef typename std::iterator_traits<T*>::reference			reference;
-		typedef typename std::iterator_traits<T*>::iterator_category	iterator_category;
+		typedef typename ft::iterator_traits<T*>::value_type			value_type;
+		typedef typename ft::iterator_traits<T*>::difference_type		difference_type;
+		typedef typename ft::iterator_traits<T*>::pointer				pointer;
+		typedef typename ft::iterator_traits<T*>::reference			reference;
+		typedef typename ft::iterator_traits<T*>::iterator_category	iterator_category;
 
 
 	/******************************************_CONST_OPERATOR_******************************************/
